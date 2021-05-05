@@ -1,0 +1,304 @@
+
+#include <Rcpp.h>
+using namespace Rcpp;
+
+#include <vector>
+#include <list>
+#include <algorithm>
+
+// [[Rcpp::plugins(cpp17)]]                                        
+std::vector<double> calc_A(const std::vector<double>& SX2,
+			   const std::vector<double>& Xs,
+			   const std::vector<double>& SX,
+			   const std::vector<double>& SP,
+			   const std::vector<double>& Seglen,
+			   const int& taustar,
+			   const std::vector<int>& Sstar)
+{
+  std::vector<double> A(Sstar.size());
+  std::transform(Xs.begin(),Xs.end(),Sstar.begin(),A.begin(),
+
+		 [&SX2,&SX,&Xs,&taustar,&SP](auto& xs, auto& sstar)
+		 {
+		   return SX2[taustar] - SX2[sstar] - 2*xs*(SX[taustar] - SX[sstar]) + (SP[taustar] - SP[sstar])*xs*xs;
+		 });
+  std::transform(Seglen.begin(),Seglen.end(),A.begin(),A.begin(),
+		 [](auto& s,auto& a)
+		 {
+		   return a/(s*s);
+		 });
+  return A;
+}
+
+
+std::vector<double> calc_B(const std::vector<double>& SX2,
+			   const std::vector<double>& Xs,
+			   const std::vector<double>& SX,
+			   const std::vector<double>& SP,  
+			   const std::vector<double>& Seglen,
+			   const int& taustar,
+			   const std::vector<int>& Sstar,
+			   const double& Xt)
+{
+  std::vector<double> B(Sstar.size());
+
+  std::transform(Xs.begin(),Xs.end(),Sstar.begin(),B.begin(),
+
+		 [&SX2,&SX,&Xs,&taustar,&SP,&Xt](auto& xs, auto& sstar)
+		 {
+
+		   return (Xt+xs)*(SX[taustar] - SX[sstar]) - (SP[taustar] - SP[sstar])*Xt*xs - (SX2[taustar] - SX2[sstar]);
+		 });
+  std::transform(Seglen.begin(),Seglen.end(),B.begin(),B.begin(),
+		 [](auto& s,auto& b)
+		 {
+		   return 2*b/(s*s);
+		 });      
+  return B;
+  
+}
+
+
+std::vector<double> calc_C(const std::vector<double>& Xs,
+			   const std::vector<double>& Seglen,
+			   const int& taustar,
+			   const std::vector<int>& Sstar,
+			   const std::vector<double>& SXY,
+			   const std::vector<double>& S)
+{
+  std::vector<double> C(Sstar.size());
+  std::transform(Xs.begin(),Xs.end(),Sstar.begin(),C.begin(),
+
+		 [&SXY,&S,&Xs,&taustar](auto& xs, auto& sstar)
+		 {
+		   return SXY[taustar] - SXY[sstar] - xs*(S[taustar] - S[sstar]);
+		 });
+    std::transform(Seglen.begin(),Seglen.end(),C.begin(),C.begin(),
+		 [](auto& s,auto& c)
+		 {
+		   return -(2.0/s)*c;
+		 });      
+
+  return C;
+}
+
+
+std::vector<double> calc_D(const int& taustar,
+			   const std::vector<int>& Sstar,
+			   const std::vector<double>& SS)
+{
+  std::vector<double> D(Sstar.size());
+  std::transform(Sstar.begin(),Sstar.end(),D.begin(),
+		 [&SS,&taustar](auto& sstar)
+		 {
+		   return SS[taustar] - SS[sstar];
+		 });
+  return D;
+  
+}
+
+std::vector<double> calc_E(const double& Xt,
+			   const std::vector<double>& Seglen,
+			   const int& taustar,
+			   const std::vector<int>& Sstar,
+			   const std::vector<double>& SXY,
+			   const std::vector<double>& S)
+{
+  std::vector<double> E(Sstar.size());
+  std::transform(Sstar.begin(),Sstar.end(),E.begin(),
+		 [&SXY,&S,&Xt,&taustar](auto& sstar)
+		 {
+		   return Xt*(S[taustar] - S[sstar]) - (SXY[taustar] - SXY[sstar]);
+		 });
+    std::transform(Seglen.begin(),Seglen.end(),E.begin(),E.begin(),
+		 [](auto& s,auto& e)
+		 {
+		   return -(2.0/s)*e;
+		 });      
+
+  return E;
+}
+
+std::vector<double> calc_FF(const std::vector<double>& SX2,
+			   const std::vector<double>& SX,
+			   const std::vector<double>& SP,
+			   const std::vector<double>& Seglen,
+			   const int& taustar,
+			    const std::vector<int>& Sstar,
+			    const double& Xt)
+{
+  std::vector<double> FF(Sstar.size());
+  std::transform(Sstar.begin(),Sstar.end(),FF.begin(),
+
+		 [&SX2,&SX,&Xt,&taustar,&SP](auto& sstar)
+		 {
+		   return SX2[taustar] - SX2[sstar] - 2*Xt*(SX[taustar] - SX[sstar]) + (SP[taustar] - SP[sstar])*Xt*Xt;
+		 });
+  std::transform(Seglen.begin(),Seglen.end(),FF.begin(),FF.begin(),
+		 [](auto& s,auto& ff)
+		 {
+		   return ff/(s*s);
+		 });
+  return FF;
+}
+
+
+
+// [[Rcpp::export]]
+std::list<std::vector<double> > coeffs_update_cpp(const std::vector<double>& SXY,
+						  const std::vector<double>& SX2,
+						  const std::vector<double>& S,
+						  const std::vector<double>& SS,
+						  const std::vector<double>& Xs,
+						  const std::vector<double>& SX,
+						  const std::vector<double>& SP,
+						  const std::vector<double>& Seglen,
+						  const int& taustar,
+						  const std::vector<int>& Sstar,
+						  const double& Xt)  
+{
+  std::list<std::vector<double> > coeffs{calc_A(SX2,Xs,SX,SP,Seglen,taustar,Sstar),
+					 calc_B(SX2,Xs,SX,SP,Seglen,taustar,Sstar,Xt),
+					 calc_C(Xs,Seglen,taustar,Sstar,SXY,S),
+					 calc_D(taustar,Sstar,SS),
+					 calc_E(Xt,Seglen,taustar,Sstar,SXY,S),
+					 calc_FF(SX2,SX,SP,Seglen,taustar,Sstar,Xt)};
+  return coeffs;
+}
+
+
+
+#include <math.h>
+#include <stdio.h>
+#include <limits.h>
+#include <cfloat>
+
+// need to put const n this
+void prune2R_orig_impl(const double* x, const int* nrows, int* Sets)
+// void prune2R_orig_impl(const *x, int *nrows, int *Sets) ---- original
+{
+  
+  int i;
+  double tcurr= -DBL_MAX;
+  int whichfun=0;
+  double minA=*(x+2), maxB=*(x+3), minC=*(x+4);
+    for ( i = 1 ; i < *nrows ; i++ ) 
+    {
+      if ( *(x+5*i+2) < minA ) 
+      {
+        minA = *(x+5*i+2);
+	maxB = *(x+5*i+3);
+	minC = *(x+5*i+4);
+        whichfun = i;
+      }
+      else if(*(x+5*i+2) == minA){
+	if(*(x+5*i+3) > maxB){
+	  maxB = *(x+5*i+3);
+	  minC = *(x+5*i+4);
+	  whichfun = i;
+	}
+	else if(*(x+5*i+3) == maxB){
+	  if(*(x+5*i+4) < minC){
+	    minC = *(x+5*i+4);
+	    whichfun = i;
+	  }
+	}
+      }
+    }
+
+   
+ int logicint[*nrows]; /*1 indicates NA*/
+ for(i=0;i<*nrows;i++){
+   logicint[i]=1;
+   *(Sets+i)=0;
+ }
+ *(Sets+whichfun)=1;
+ int sum=*nrows;
+    while(sum>0){
+      double intercepts[*nrows];
+      logicint[whichfun]=0;
+      intercepts[whichfun]=0;
+      for (i=0;i<*nrows;i++){
+	if(logicint[i]!=0){
+	  double A=*(x+5*i+2)-*(x+5*whichfun+2);
+	  double B=*(x+5*i+3)-*(x+5*whichfun+3);
+	  double C=*(x+5*i+4)-*(x+5*whichfun+4); /*creates the diffcoeff function*/
+	  double disc=B*B-4*A*C;
+	  if(disc<0){
+	    intercepts[i]=0/*NA*/;
+	    logicint[i]=0;
+	  }
+	  else{
+	    if(A==0){
+	      if(B==0){
+		intercepts[i]=0;
+		logicint[i]=0;
+		}
+	      else if((-C/B)>tcurr){
+		intercepts[i]=-C/B;
+		logicint[i]=1;
+	      }
+	      else{
+		intercepts[i]=0/*NA*/;
+		logicint[i]=0;
+	      }
+	    }
+	    else{
+	      double vec2a=(-B-sqrt(disc))/(2*A);
+	      double vec2b=(-B+sqrt(disc))/(2*A);
+	      if(vec2a<=tcurr && vec2b<=tcurr){
+		intercepts[i]=0/*NA*/;
+		logicint[i]=0;
+	      }
+	      else if(vec2a<=tcurr && vec2b>tcurr){
+		intercepts[i]=vec2b;
+		logicint[i]=1;
+	      }
+	      else if((vec2a>tcurr && vec2b<=tcurr) || (vec2a>tcurr && vec2b>tcurr && vec2a<vec2b)){
+		intercepts[i]=vec2a;
+		logicint[i]=1;
+	      }
+	      else{
+		intercepts[i]=vec2b;
+		logicint[i]=1;
+	      }
+	    }
+	  }
+	}
+      }
+      int j;
+      sum=0;
+      int whichfunnew;
+      double minimum=LONG_MAX;
+      for(j=0;j<*nrows;j++){
+	if(logicint[j]!=0){
+	  sum=sum+logicint[j];
+	  if ( intercepts[j] < minimum ) {
+	    minimum = intercepts[j];
+	    whichfunnew = j;
+	  }
+	}
+      }
+      logicint[whichfun]=1;
+      if(sum!=0){
+	tcurr = minimum;
+	whichfun = whichfunnew;
+	*(Sets+whichfun)=1;
+      }
+    }
+}
+
+
+// [[Rcpp::export]]
+std::vector<int> prune(const std::vector<double>& x,const int& nrows)
+{
+  std::vector<int> result(nrows);
+  prune2R_orig_impl(&x[0],&nrows,&result[0]);   
+  return result;
+}
+
+
+
+
+
+

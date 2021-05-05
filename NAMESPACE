@@ -1,0 +1,5 @@
+useDynLib(cpop, .registration=TRUE)
+# exportPattern("^[[:alpha:]]+")
+export(CPOP)
+export(CPOP.uneven)
+importFrom(Rcpp, evalCpp)

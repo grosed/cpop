@@ -1,0 +1,12 @@
+Package: cpop
+Type: Package
+Title: Detects Multiple Changes in Slope in Univariate Time-Series 
+Version: 0.0
+Date: 2018-05-21
+Author: Paul Fearhead <p.fearnhead@lancaster.ac.uk> [aut], Daniel Grose [cre,ctb]
+Maintainer: Daniel Grose <dan.grose@lancaster.ac.uk>
+Description: Detects Multiple Changes in Slope in Univariate Time-Series.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.13), RcppProgress
+LinkingTo: Rcpp,RcppProgress
+RoxygenNote: 6.0.1
