@@ -8,8 +8,6 @@
 
 
 #include "Rcpp.h"
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 using namespace Rcpp;
 
 // need to put const n this
@@ -139,9 +137,6 @@ void coeffupdate_orig_impl(const double* coeffs,
 // extern "C"   void coeffupdate(double *coeffs, double *S, double *SJ, double *SS, int *taustar, double *sigsquared, double *beta, int *nrows, double *coeffnew)
 {
 
-    // added interupt handler - D Grose 16-02-2017
-  Progress p(0,false); // needs an instance for interrupt handler
-    // end addition
   
   /*Stuff the function will provide
   double SJ[11]={23,4,2,1,4,3,5,3,2,5,12};
@@ -152,9 +147,6 @@ void coeffupdate_orig_impl(const double* coeffs,
   double A,B,C,D,E,FF,seglen;
   /* coeffnew = (double *)calloc(5**nrows,sizeof(double)); /*take out this line to make it work */
   for(i = 0; i < *nrows; i++) {
-    // added interupt handler - D Grose 16-02-2017
-    if(i % 128 == 0 && Progress::check_abort()) { stop("User interrupt"); }
-    // end addition
     *(coeffnew+5*i)=*taustar;
     *(coeffnew+5*i+1)=*(coeffs+5*i);
     sstar=*(coeffnew+5*i+1);

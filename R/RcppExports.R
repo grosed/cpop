@@ -2,14 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 coeffs_update_cpp <- function(SXY, SX2, S, SS, Xs, SX, SP, Seglen, taustar, Sstar, Xt) {
-    .Call(`_cpop_coeffs_update_cpp`, SXY, SX2, S, SS, Xs, SX, SP, Seglen, taustar, Sstar, Xt)
+    .Call('_cpop_coeffs_update_cpp', PACKAGE = 'cpop', SXY, SX2, S, SS, Xs, SX, SP, Seglen, taustar, Sstar, Xt)
 }
 
 coeffupdate <- function(coeffs, S, SJ, SS, taustar, sigsquared, beta, nrow, ncol) {
-    .Call(`_cpop_coeffupdate`, coeffs, S, SJ, SS, taustar, sigsquared, beta, nrow, ncol)
+    .Call('_cpop_coeffupdate', PACKAGE = 'cpop', coeffs, S, SJ, SS, taustar, sigsquared, beta, nrow, ncol)
 }
 
 prune <- function(x, nrows) {
-    .Call(`_cpop_prune`, x, nrows)
+    .Call('_cpop_prune', PACKAGE = 'cpop', x, nrows)
 }
 

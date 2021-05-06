@@ -1,4 +1,0 @@
-useDynLib(cpop, .registration=TRUE)
-# exportPattern("^[[:alpha:]]+")
-export(CPOP)
-importFrom(Rcpp, evalCpp)

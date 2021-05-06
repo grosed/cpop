@@ -1,61 +1,103 @@
-#' CPOP 
-#'
-#'  Algorithm for finding the best segmentation of data for a change-in-slope model where best is defined in terms of minimising
-#' \eqn{ \frac{1}{\sigma^2} \sum_{i=1}^n (y_{i}-f_{i})^2+m\beta} 
-#' where \eqn{y_i} are data, \eqn{f_i} is the fitted mean at point \eqn{i}, \eqn{m}  the number of changepoints
-#' and \eqn{\beta} a parameter. (NOTE - this section  also forms part of the output produced by help in R - but the LaTeX does not get processed
-#' unless the option \code{help_type="pdf"} is used to generate a pdf file - and this will only be the case if LaTeX is installed on the users system.
-#' It is probably better to restrict the use of LaTeX to the cpop-package section of the documentation. 
-#'
-#' 
-#' @param y A vector of length n containing the data.
-#' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
-#' @param sigsquared Estimate of residual variance.
-#'
-#' @return List of minimum values and associated changepoints.
-#'
-#' @references
-#' Put any references here
-#'
-#' @examples
-#' ls()
-#'  
-#' @export
-CPOP<-function(y,beta,sigsquared=1)
+
+.cpop.class<-setClass("cpop.class",representation(min.cost="numeric",changepoints="numeric",y="numeric",x="numeric"))
+
+cpop.class<-function(y,x,min.cost,changepoints)
 {
-    CPOP_impl(y,beta,sigsquared,TRUE,TRUE,FALSE)
+    .cpop.class(y=y,x=x,min.cost=min.cost,changepoints=changepoints)
 }
 
 
-#' CPOP.uneven 
+
+#' Visualisation of changepoint locations and data
 #'
-#'  Algorithm for finding the best segmentation of data for a change-in-slope model where best is defined in terms of minimising
-#' \eqn{ \frac{1}{\sigma^2} \sum_{i=1}^n (y_{i}-f_{i})^2+m\beta} 
-#' where \eqn{y_i} are data, \eqn{f_i} is the fitted mean at point \eqn{i}, \eqn{m}  the number of changepoints
-#' and \eqn{\beta} a parameter. (NOTE - this section  also forms part of the output produced by help in R - but the LaTeX does not get processed
-#' unless the option \code{help_type="pdf"} is used to generate a pdf file - and this will only be the case if LaTeX is installed on the users system.
-#' It is probably better to restrict the use of LaTeX to the cpop-package section of the documentation. 
+#' @name plot
 #'
+#' @description Plot methods for S4 objects returned by \code{\link{cpop}}.
+#'
+#' @docType methods
+#'
+#' @param x An instance of an cpop S4 class produced by \code{\link{cpop}}.
+#' 
+#' @return A ggplot object.
+#'
+#' @rdname plot-methods
+#'
+#' @aliases plot,cpop.class-method
+#' 
+#' @export 
+setMethod("plot",signature=list("cpop.class"),function(x)
+{
+  obj <- x
+  df <- data.frame("x"=obj@x,"y"=obj@y)
+  cpts<-obj@changepoints
+  # appease ggplot2
+  y <- NULL
+  p <- ggplot(data=df, aes(x=x, y=y))
+  p <- p + geom_point(alpha=0.3)
+  if(length(cpts) > 2)
+  {
+   cpts<-cpts[2:(length(cpts)-1)]
+   for(cpt in cpts)
+   {
+     p <- p + geom_vline(xintercept = obj@x[cpt],color="red")
+   }
+  }
+  p <- p + theme_bw()
+  return(p)
+})
+
+
+#' cpop
+#'
+#'  Algorithm for finding the best segmentation of data for a change-in-slope model.
 #' 
 #' @param y A vector of length n containing the data.
-#' @param x A vector of length n containing the locations of the data.
+#' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
-#' @param sigsquared Estimate of residual variance.
+#' @param sigsquared Estimate of residual variance. Default value is 1.
 #'
-#' @return List of minimum values and associated changepoints.
+#' @return An instance of an S4 class of type cpop.class.
 #'
-#' @references
-#' Put any references here
+#' @references \insertRef{doi:10.1080/10618600.2018.1512868}{cpop}
 #'
 #' @examples
-#' ls()
+#'
+#' library(cpop)
+#' # generate some test data
+#' set.seed(0)
+#' x <- seq(0,1,0.01)
+#' n <- length(x)
+#' sigma <- rep(0.1,n)
+#' mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
+#' y <- rnorm(n,mu,sigma)
+
+#' # use the locations in x
+#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' plot(res)
+
+#' # without locations (note explicit paramater names)
+#' res <- cpop(y,beta=2*log(length(y)),sigsquared=0.1)
+#' plot(res)
+
+#' # stretch the end of the data
+#' x[75:101] <- x[75:101] + seq(from=0,by=0.2,length.out=27)
+#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' plot(res)
 #'  
 #' @export
-CPOP.uneven<-function(y,x,beta,sigsquared=1)
+cpop<-function(y,x=NULL,beta = 0,sigsquared=1)
 {
-    CPOP.uneven_impl(y,x,beta,sigsquared,TRUE,FALSE)
+    if(is.null(x))
+    {
+	res<-CPOP_impl(y,beta,sigsquared,TRUE,TRUE,FALSE)
+	x<-1:length(y)
+    }
+    else
+    {
+	res<-CPOP.uneven_impl(y,x,beta,sigsquared,TRUE,FALSE)
+    }
+    return(cpop.class(y,x,res$min.cost,res$changepoints))
 }
-
 
 CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=FALSE){
   
