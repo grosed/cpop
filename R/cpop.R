@@ -47,6 +47,58 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 })
 
 
+#' Changepoint locations
+#'
+#' @name changepoints
+#'
+#' @description Creates a data frame containing the locations of the changepoints in terms of the index of the data and the value of the location at that index.
+#'
+#' @docType methods
+#'
+#' @rdname changepoints-methods
+#'
+if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {standardGeneric("changepoints")})}
+
+#' @name changepoints
+#' @param object  An instance of an cpop S4 class produced by \code{\link{cpop}}.
+#' 
+#' @return A data frame.
+#' 
+#' @rdname changepoints-methods
+#'
+#' @aliases changepoints,cpop.class-method
+#'
+#' @examples
+#'
+#' library(cpop)
+#' # generate some test data
+#' set.seed(0)
+#' x <- seq(0,1,0.01)
+#' n <- length(x)
+#' sigma <- rep(0.1,n)
+#' mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
+#' y <- rnorm(n,mu,sigma)
+#'
+#' # use the locations in x
+#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' changepoints(res)
+#'
+#' @export
+setMethod("changepoints",signature=list("cpop.class"),
+          function(object)
+          {
+	      if(length(object@changepoints) > 1)
+	      {
+	      	      df <- data.frame("index"=object@changepoints[2:length(object@changepoints)],"position"=object@x[object@changepoints[2:length(object@changepoints)]])	
+	      }
+	      else
+	      {
+	      	      df <- data.frame("index"=integer(0),"position"=numeric(0))	
+	      }
+	      return(df)
+          })	      
+
+
 #' cpop
 #'
 #'  Algorithm for finding the best segmentation of data for a change-in-slope model.
@@ -70,15 +122,15 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 #' sigma <- rep(0.1,n)
 #' mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
 #' y <- rnorm(n,mu,sigma)
-
+#'
 #' # use the locations in x
 #' res <- cpop(y,x,2*log(length(y)),0.1)
 #' plot(res)
-
+#'
 #' # without locations (note explicit paramater names)
 #' res <- cpop(y,beta=2*log(length(y)),sigsquared=0.1)
 #' plot(res)
-
+#'
 #' # stretch the end of the data
 #' x[75:101] <- x[75:101] + seq(from=0,by=0.2,length.out=27)
 #' res <- cpop(y,x,2*log(length(y)),0.1)
