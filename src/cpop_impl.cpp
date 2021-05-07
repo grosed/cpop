@@ -10,6 +10,18 @@
 #include "Rcpp.h"
 using namespace Rcpp;
 
+
+#include <cmath>
+
+bool cmp_double(const double& a, const double& b)
+{
+    static constexpr auto epsilon = 1.0e-05f;
+    if (std::abs(a - b) <= epsilon)
+        return true;
+    return std::abs(a - b) <= epsilon * std::max(std::abs(a), std::abs(b));
+}
+
+
 // need to put const n this
 void prune2R_orig_impl(const double* x, const int* nrows, int* Sets)
 // void prune2R_orig_impl(const *x, int *nrows, int *Sets) ---- original
@@ -28,13 +40,15 @@ void prune2R_orig_impl(const double* x, const int* nrows, int* Sets)
 	minC = *(x+5*i+4);
         whichfun = i;
       }
-      else if(*(x+5*i+2) == minA){
+      // else if(*(x+5*i+2) == minA){
+      else if(cmp_double(*(x+5*i+2),minA)){
 	if(*(x+5*i+3) > maxB){
 	  maxB = *(x+5*i+3);
 	  minC = *(x+5*i+4);
 	  whichfun = i;
 	}
-	else if(*(x+5*i+3) == maxB){
+	// else if(*(x+5*i+3) == maxB){
+	else if(cmp_double(*(x+5*i+3),maxB)){
 	  if(*(x+5*i+4) < minC){
 	    minC = *(x+5*i+4);
 	    whichfun = i;
@@ -66,8 +80,10 @@ void prune2R_orig_impl(const double* x, const int* nrows, int* Sets)
 	    logicint[i]=0;
 	  }
 	  else{
-	    if(A==0){
-	      if(B==0){
+	    // if(A==0){
+	    if(cmp_double(A,0)){
+	      // if(B==0){
+	      if(cmp_double(B,0)){
 		intercepts[i]=0;
 		logicint[i]=0;
 		}
@@ -157,8 +173,10 @@ void coeffupdate_orig_impl(const double* coeffs,
     D=seglen/2*log(2*M_PI* *sigsquared)+1/(2* *sigsquared)*(*(SS+*taustar)-*(SS+sstar));
     E=(-1)*C-1/ *sigsquared*(*(S+*taustar)-*(S+sstar));
     FF=(seglen-1)*(2*seglen-1)/(12*seglen* *sigsquared);
-    if((FF==0) && (*(coeffs+5*i+2)==0)){
-      if(B==0){
+    // if((FF==0) && (*(coeffs+5*i+2)==0)){
+    if((cmp_double(FF,0)) && (cmp_double(*(coeffs+5*i+2),0))){
+      // if(B==0){
+      if(cmp_double(B,0)){
 	*(coeffnew+5*i+4)=*(coeffs+5*i+4)+D+ *beta;
 	*(coeffnew+5*i+3)=C;
 	*(coeffnew+5*i+2)=A;
