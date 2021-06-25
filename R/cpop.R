@@ -1,14 +1,67 @@
 
-.cpop.class<-setClass("cpop.class",representation(min.cost="numeric",changepoints="numeric",y="numeric",x="numeric"))
+.cpop.class<-setClass("cpop.class",representation(min.cost="numeric",
+                                                  changepoints="numeric",
+						  y="numeric",
+						  x="numeric",
+						  y_hat="numeric",
+						  residuals="numeric",
+						  parameters="numeric",
+						  beta="numeric",
+						  sigsquared="numeric"))
 
-cpop.class<-function(y,x,min.cost,changepoints)
+cpop.class<-function(y,x,beta,sigsquared,min.cost,changepoints,y_hat,residuals,parameters)
 {
-    .cpop.class(y=y,x=x,min.cost=min.cost,changepoints=changepoints)
+    .cpop.class(y=y,
+                x=x,
+		min.cost=min.cost,
+		changepoints=changepoints,
+		y_hat=as.numeric(y_hat),
+		residuals=as.numeric(residuals),
+		parameters=parameters,
+		beta=beta,
+		sigsquared=sigsquared)
 }
 
 
+#' A function for generating simulated multivariate data
+#'
+#' @name simulate
+#'
+#' @description Generates simulated data for use with \code{\link{cpop}}.
+#' 
+#' @param x A numeric vector of containing the locations of the data.
+#' @param changepoints A numeric vector of changepoint locations.
+#' @param change.slope A numeric vector indicating the change in slope at each changepoint. The initial slope is assumed to be 0.
+#' @param sigma The residual standard deviation. Can be a single numerical value or a vector of values for the case of varying residual standard deviation.Default value is 1.
+#' @return A vector of simulated y values.
+#'
+#' @examples
+#' library(cpop)
+#' set.seed(1)
+#' changepoints=c(0,25,50,100)
+#' change.slope=c(0.2,-0.3,0.2,-0.1)
+#' x=1:200
+#' sig=1+x/200
+#' y<-simulate(x,changepoints,change.slope,sig)
+#' res<-cpop(y,x,2*log(length(x)),sig^2)
+#' summary(res)
+#' plot(res)
+#'
+#' @export
+simulate<-function(x,changepoints,change.slope,sigma=1)
+{
+  K=length(changepoints)
+  mu=rep(0,length(x))
+  for(k in 1:K)
+  {
+     mu=mu+change.slope[k]*pmax(x-changepoints[k],0)
+  }
+  y=mu+rnorm(length(x),0.0,sigma)
+  return(y)
+}
 
-#' Visualisation of changepoint locations and data
+
+#' Visualisation of Changepoint Locations and Data
 #'
 #' @name plot
 #'
@@ -42,12 +95,143 @@ setMethod("plot",signature=list("cpop.class"),function(x)
      p <- p + geom_vline(xintercept = obj@x[cpt],color="red")
    }
   }
+  # appease ggplot2
+  xs <- ys <- xends <- yends <- NULL  
+  cpts<-obj@changepoints
+  cpts[1]<-1
+  df<-data.frame("xs"=obj@x[cpts][1:(length(obj@x[cpts])-1)],
+	         "ys"=obj@y_hat[cpts][1:(length(obj@y_hat[cpts])-1)],
+		 "xends"=obj@x[cpts][2:length(obj@x[cpts])],
+		 "yends"=obj@y_hat[cpts][2:length(obj@y_hat[cpts])])
+  p <- p + geom_segment(data=df,aes(x=xs,y=ys,xend=xends,yend=yends))
   p <- p + theme_bw()
   return(p)
 })
 
 
-#' Changepoint locations
+
+#' Summary of cpop Analysis.
+#'
+#' @name summary
+#'
+#' @description Summary method for results produced by \code{\link{cpop}}.
+#'
+#' @docType methods
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @rdname summary-methods
+#'
+#' @aliases summary,cpop.class-method
+#'
+#' @export
+setMethod("summary",signature=list("cpop.class"),function(object)
+{
+  cat('\n',"cpop analysis with n = ",length(object@x)," and penalty (beta)  = ",object@beta,'\n\n',sep="")
+  if(length(object@changepoints) == 2)
+  {
+    cat("No changepoints detected",'\n\n',sep="")
+  }
+  else
+  {
+    msg<-paste(length(object@changepoints)-2," ",sep="")
+    if(length(object@changepoints) == 3)
+     {
+       msg<-paste(msg," changepoint",sep="")
+     }
+     else
+     {
+       msg<-paste(msg," changepoints",sep="")
+     }
+     msg<-paste(msg," detected at :",'\n',sep="")
+     cat(msg)
+     msg<-"index : "
+     for(cpt in object@changepoints[2:(length(object@changepoints)-1)])
+     {
+       msg<-paste(msg,cpt,sep=" ")
+     }
+     msg<-paste(msg,'\n',sep="")
+     cat(msg)
+     msg<-"location : "
+     for(location in object@x[object@changepoints[2:(length(object@changepoints)-1)]])
+     {
+       msg<-paste(msg,location,sep=" ")
+     }
+     msg<-paste(msg,'\n',sep="")
+     cat(msg)
+  }
+  df <- fitted(object)
+  cat("fitted values : ",'\n',sep="")
+  print(df)
+  cat('\n',"overall RSS = ",sum(df$RSS),'\n',sep="")
+  cat("cost = ",sum(object@residuals^2/object@sigsquared)+2*log(length(object@x))*(length(object@changepoints)-2),'\n',sep="")
+  invisible()
+})
+
+
+#' Displays an S4 object produced by cpop.
+#'
+#' @name show
+#'
+#' @description Displays an S4 object produced by \code{\link{cpop}}.
+#'
+#' @docType methods
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @rdname show-methods
+#'
+#' @aliases show,cpop.class-method
+#' 
+#'
+#' @export
+if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
+setMethod("show",signature=list("cpop.class"),function(object)
+{
+    summary(object)
+    invisible()
+})
+
+
+#' Extract Model Fitted Values
+#'
+#' @name fitted
+#'
+#' @description Extracts the fitted valus produced by \code{\link{cpop}}.
+#'
+#' @docType methods
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @return A data frame containing the endpoint coordinates for each line segment fitted between
+#' the detected changepoints. The data frame also contains the gradient and intercept values
+#' for each segment and the corresponding residual sum of squares (RSS)..
+#'
+#' @rdname fitted-methods
+#'
+#' @aliases fitted,cpop.class-method
+#'
+#' @export
+if(!isGeneric("fitted")) {setGeneric("fitted",function(object) {standardGeneric("fitted")})}
+setMethod("fitted",signature=list("cpop.class"),
+          function(object)
+          {
+	  cpts <- object@changepoints
+          cpts[1] <- 1
+  	  df<-data.frame("x0"=object@x[cpts][1:(length(object@x[cpts])-1)],
+			 "y0"=object@y_hat[cpts][1:(length(object@y_hat[cpts])-1)],
+		         "x1"=object@x[cpts][2:length(object@x[cpts])],
+		         "y1"=object@y_hat[cpts][2:length(object@y_hat[cpts])])
+          df <- cbind(df,data.frame("gradient"=(df$y1 - df$y0)/(df$x1 - df$x0)))
+	  df <- cbind(df,data.frame("intercept"=df$y1 - df$gradient * df$x1))
+	  cpts <- object@changepoints
+          rss<-as.numeric(Map(function(i,j) sum(object@residuals[i:j]*object@residuals[i:j]),cpts[1:(length(cpts)-1)]+1,cpts[2:length(cpts)]))
+	  df <- cbind(df,data.frame("RSS"=rss))
+	  return(df)
+          })	      
+
+
+#' Changepoint Locations
 #'
 #' @name changepoints
 #'
@@ -87,13 +271,13 @@ if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {stan
 setMethod("changepoints",signature=list("cpop.class"),
           function(object)
           {
-	      if(length(object@changepoints) > 1)
+	      if(length(object@changepoints) > 2)
 	      {
-	      	      df <- data.frame("index"=object@changepoints[2:length(object@changepoints)],"position"=object@x[object@changepoints[2:length(object@changepoints)]])	
+	      	      df <- data.frame("index"=object@changepoints[2:(length(object@changepoints)-1)],"location"=object@x[object@changepoints[2:(length(object@changepoints)-1)]])	
 	      }
 	      else
 	      {
-	      	      df <- data.frame("index"=integer(0),"position"=numeric(0))	
+	      	      df <- data.frame("index"=integer(0),"locaion"=numeric(0))	
 	      }
 	      return(df)
           })	      
@@ -106,7 +290,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
-#' @param sigsquared Estimate of residual variance. Default value is 1.
+#' @param sigsquared Estimate of residual variance. Can be a single numerical value or a vector of values for the case of varying residual variance. Default value is 1. 
 #'
 #' @return An instance of an S4 class of type cpop.class.
 #'
@@ -137,18 +321,19 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' plot(res)
 #'  
 #' @export
-cpop<-function(y,x=NULL,beta = 0,sigsquared=1)
+cpop<-function(y,x=NULL,beta=0,sigsquared=1)
 {
     if(is.null(x))
     {
-	res<-CPOP_impl(y,beta,sigsquared,TRUE,TRUE,FALSE)
-	x<-1:length(y)
+       x<-1:length(y)
     }
-    else
+    if(length(sigsquared)!=length(y))
     {
-	res<-CPOP.uneven_impl(y,x,beta,sigsquared,TRUE,FALSE)
+      sigsquared=rep(sigsquared[1],length(y))
     }
-    return(cpop.class(y,x,res$min.cost,res$changepoints))
+    res<-CPOP.uneven_impl(y,x,beta,sigsquared,TRUE,FALSE)
+    fit<-cpop.fit(y,x,res$changepoints,sigsquared)
+    return(cpop.class(y,x,beta,sigsquared,res$min.cost,res$changepoints,fit$fit,fit$residuals,fit$pars))
 }
 
 CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=FALSE){
@@ -331,105 +516,6 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 
 
 
-
-
-
-
-
-CPOP_impl<-function(y,beta,sigsquared=1,useC=TRUE,useCprune=TRUE,printiteration=FALSE){
-  n<-length(y)
-  S<-0
-  for(i in 1:n){
-    S[i+1]<-S[i]+y[i]
-  }
-  SJ<-0
-  for(i in 1:n){
-    SJ[i+1]<-SJ[i]+y[i]*i
-  }
-  SS<-0
-  for(i in 1:n){
-    SS[i+1]<-SS[i]+y[i]^2
-  }  ##preprocessing
-  
-  
-  coeffs<-matrix(0,ncol=5,nrow=1) #first two columns are current time point and most recent changepoint, final three are coefficients for cost
-  coeffs[1,5]<--beta
-  coeffs[1,1:2]<-c(0,0)
-  CPvec<-c("0") #vector storing changepoint values, not used in code but required as an output 
-  lencoo<-c()
-  lencur<-c()
- ######
-  ## code minimise 1/(2sigma^2)*RSS rather than RSS/sigma^2
-  ## hence need to have sigma^2 
- #### 
- sigsquared=sigsquared/2
-
-  for(taustar in 1:n){
-    new.CPvec<-paste(CPvec,taustar,sep=",")
-    ##update coefficients
-   if(useC==FALSE){
-    new.coeffs=coeff.update2(coeffs,S,SJ,SS,taustar,sigsquared,beta)
-    }    else if(useC==TRUE){
-      new.coeffs=coeff.update.c(coeffs,S,SJ,SS,taustar,sigsquared,beta)
-    } else{stop("useC must be a TRUE or FALSE value")
-    }
-   # if(taustar==2){browser()}
-    if(taustar!=n){ #skip pruning on last step
-    ###################################################pruning bit##########  
-    if(length(new.coeffs[,1])>1){
-      ##added###
-      keep1=prune1(new.coeffs,taustar) ##first pruning
-      new.coeffs.p=new.coeffs[keep1,]
-      new.CPvec=new.CPvec[keep1]
-      ###########
-      if(sum(keep1)>1){
-       if(useCprune==F){
-         keep2=prune2b(new.coeffs.p) }##find set of functions to keep
-       else if(useCprune==T){
-         keep2=prune2.c(new.coeffs.p) } 
-       else{stop("useCprune must be a TRUE or FALSE value")
-       }
-       new.coeffs.p=new.coeffs.p[keep2,]
-        new.CPvec=new.CPvec[keep2]
-      }
-    }else{
-      new.coeffs.p=new.coeffs
-    }
-    ####PELT PRUNE############################
-    if(taustar>2){
-      keeppelt=peltprune(new.coeffs,beta)
-      coeffs<-coeffs[keeppelt,]
-      CPvec<-CPvec[keeppelt]
-    }
-    ##########################################
-    }
-    else{new.coeffs.p<-new.coeffs}
-    CPvec<-c(CPvec,new.CPvec) #prunes both CPvec vector and coeffs matrix
-    coeffs<-rbind(coeffs,new.coeffs.p)
-    lencoo[taustar]<-length(coeffs[,1])
-    lencur[taustar]<-length(new.coeffs.p)/5
-    #####################################################
-    if(printiteration==TRUE){
-    if(taustar%%100==0) cat("Iteration ",taustar,"Functions-stored",lencoo[taustar],lencur[taustar],"\n")}
-    else if(printiteration!=FALSE){stop("printiteration must be a TRUE or FALSE value")}
-  }
-  
-  coeffscurr<-coeffs[coeffs[,1]==n,] #matrix of coeffs for end time t=n
-  if(!is.matrix(coeffscurr)){coeffscurr<-t(as.matrix(coeffscurr))} #makes sure coeffscurr is in the right format
-  ttemp<-coeffscurr[,5]-(coeffscurr[,4]^2)/(4*coeffscurr[,3])
-  mttemp<-min(ttemp)
-  num<-which(ttemp==mttemp)
-  
-  CPveccurr<-CPvec[coeffs[,1]==n]
-  CPS<-eval(parse(text=paste("c(",CPveccurr[num],")")))
-#####
-  ##code has an additional additive factor of (n/2) * log(2*pi*sigma^2) in cost
-  ## hence we remove this so mttemp is the minimum of the correct cost
-#####
-  mttemp=mttemp - (n/2)*log(2*pi*sigsquared)
-  return(list(min.cost=mttemp,changepoints=CPS)) #return min cost and changepoints
-}
-
 ########################################################################################
 ###################### coeff update#####################################################
 ###avoids loop
@@ -604,3 +690,25 @@ null2na<-function(vec){
 ################end#######################
 
 
+cpop.fit=function(y,x,out.changepoints,sigsquared)
+{
+  n=length(y)
+  if(length(sigsquared)!=n) sigsquared=rep(sigsquared[1],n)
+  p=length(out.changepoints)
+  W=diag(sigsquared^-1)
+  X=matrix(NA,nrow=n,ncol=p)
+  X[,1]=1
+  X[,2]=x-x[1]
+  if(p>2)
+  {
+    for(i in 2:(p-1))
+    {
+      X[,i+1]=c(rep(0,out.changepoints[i]-1),x[(out.changepoints[i]):n]-x[out.changepoints[i]])
+    }
+  }
+  XTX=t(X)%*%W%*%X
+  beta=as.vector(solve(XTX)%*%t(X)%*%W%*%y)
+  fit=X%*%beta
+  residuals=y-fit
+  return(list(fit=fit,residuals=residuals,X=X,pars=beta))
+}

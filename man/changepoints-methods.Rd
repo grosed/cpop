@@ -4,7 +4,7 @@
 \name{changepoints}
 \alias{changepoints}
 \alias{changepoints,cpop.class-method}
-\title{Changepoint locations}
+\title{Changepoint Locations}
 \usage{
 \S4method{changepoints}{cpop.class}(object)
 }

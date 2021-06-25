@@ -13,7 +13,7 @@ cpop(y, x = NULL, beta = 0, sigsquared = 1)
 
 \item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).}
 
-\item{sigsquared}{Estimate of residual variance. Default value is 1.}
+\item{sigsquared}{Estimate of residual variance. Can be a single numerical value or a vector of values for the case of varying residual variance. Default value is 1.}
 }
 \value{
 An instance of an S4 class of type cpop.class.
