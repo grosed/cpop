@@ -23,7 +23,7 @@ std::vector<double> coeffupdate(const std::vector<double>& coeffs,
   return coeffnew; 
 }
 
-
+// not currently employed - due for removal
 // [[Rcpp::export]]
 std::vector<int> prune(const std::vector<double>& x,const int& nrows)
 {
