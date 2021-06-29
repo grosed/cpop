@@ -12,10 +12,14 @@ using namespace Rcpp;
 
 
 #include <cmath>
+#include <limits>
+
+
 
 bool cmp_double(const double& a, const double& b)
 {
-    static constexpr auto epsilon = 1.0e-05f;
+  static constexpr auto epsilon = std::numeric_limits<double>::epsilon();
+  // static constexpr auto epsilon = 1.0e-05f;
     if (std::abs(a - b) <= epsilon)
         return true;
     return std::abs(a - b) <= epsilon * std::max(std::abs(a), std::abs(b));

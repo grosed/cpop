@@ -406,12 +406,14 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=
       new.CPvec=new.CPvec[keep1]
       ###########
       if(sum(keep1)>1){
+      
        if(useCprune==F){
-         keep2=prune2b(new.coeffs.p) }##find set of functions to keep
+       keep2=prune2b(new.coeffs.p)
+       }##find set of functions to keep
        else if(useCprune==T){
          keep2=prune2.c(new.coeffs.p) } 
        else{stop("useCprune must be a TRUE or FALSE value")
-       }
+      }
        new.coeffs.p=new.coeffs.p[keep2,]
         new.CPvec=new.CPvec[keep2]
       }
@@ -516,76 +518,6 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 
 
 
-########################################################################################
-###################### coeff update#####################################################
-###avoids loop
-########################################################################################
-
-coeff.update2=function(coeffs,S,SJ,SS,taustar,sigsquared,beta){
-  
-  coeff.new<-coeffs
-  coeff.new[,2]=coeffs[,1] 
-  coeff.new[,1]<-taustar
-  
-  sstar<-coeff.new[,2]
-  seglen<-taustar-sstar
-  A<-(seglen+1)*(2*seglen+1)/(12*seglen*sigsquared)
-  B<- (seglen^2-1)/(6*seglen*sigsquared)
-  C<-(-1)/(seglen*sigsquared)*(SJ[taustar+1]-SJ[sstar+1]-sstar*(S[taustar+1]-S[sstar+1]))
-  D<-seglen/2*log(2*pi*sigsquared)+1/(2*sigsquared)*(SS[taustar+1]-SS[sstar+1])
-  E<-(-1)*C-1/(sigsquared)*(S[taustar+1]-S[sstar+1])
-  FF<-(seglen-1)*(2*seglen-1)/(12*seglen*sigsquared)
-  
-  m=length(sstar)
-  ind1=(1:m)[FF==0 & coeffs[,3]==0 & B==0]
-  ind2=(1:m)[FF==0 & coeffs[,3]==0 & B!=0]
-  ind3=(1:m)[!(FF==0 & coeffs[,3]==0)]
-  if(length(ind1)>0){
-    coeff.new[ind1,5]<-coeffs[ind1,5]+D[ind1]+beta
-    coeff.new[ind1,4]<-C[ind1]
-    coeff.new[ind1,3]<-A[ind1] 
-  }
-  
-  if(length(ind2)>0){
-    coeff.new[ind2,5]<-(-E[ind2]-coeffs[ind2,4])/B[ind2]+beta
-    coeff.new[ind2,4]<-0
-    coeff.new[ind2,3]<-0
-  }
-  
-  if(length(ind3)>0){
-    coeff.new[ind3,5]<-coeffs[ind3,5]+D[ind3]-(coeffs[ind3,4]+E[ind3])^2/(4*(coeffs[ind3,3]+FF[ind3]))+beta
-    coeff.new[ind3,4]<-C[ind3]-(coeffs[ind3,4]+E[ind3])*B[ind3]/(2*(coeffs[ind3,3]+FF[ind3]))
-    coeff.new[ind3,3]<-A[ind3]-(B[ind3]^2)/(4*(coeffs[ind3,3]+FF[ind3]))
-  }
-  
-  return(coeff.new)
-}
-
-########################################################################################
-#####coeff.update in C##################
-########################################################################################
-coeff.update.c<-function(coeffs,S,SJ,SS,taustar,sigsquared,beta){
-  nrows<-dim(coeffs)
-  coeffs<-as.double(as.vector((t(coeffs))))
-  # coutput<- .C("coeffupdate",as.double(t(coeffs)),as.double(S),as.double(SJ),as.double(SS),as.integer(taustar),as.double(sigsquared),as.double(beta),as.integer(nrows[1]),coeffnewlong=double(nrows[1]*nrows[2]))
-  coutput<-coeffupdate(t(coeffs),S,SJ,SS,taustar,sigsquared,beta,nrows[1],nrows[2])
-  # result<-matrix(coutput$coeffnewlong,nrow=nrows[1],byrow=T)
-  result<-matrix(coutput,nrow=nrows[1],byrow=T)
-  return(result)
-}
-
-############################################################################################################
-##first prune of functions
-## x is matrix of functions
-############################################################################################################
-prune1=function(x,taustar){
-  min.vals<-x[,5]-(x[,4]^2)/(2*x[,3])
-  m=min(min.vals[x[,2]==taustar-1])
-  keep<-c(rep(T,length(min.vals[x[,2]!=taustar-1])),(min.vals[x[,2]==taustar-1])<=m)
-  return(keep) ##keep only those with a smaller minimum.
-}
-
-
 ##########################################################################################################
 ##second pruning
 ## again x is matrix of quadratics
@@ -655,18 +587,7 @@ prune2b=function(x){
   return(which(output1[,1]!=0))
 }
 
-#############################################################################
-#########second pruning in C##################################################
-####################################################################################
 
-prune2.c<-function(x){
-  nrows<-dim(x)[[1]]
-  # coutput<- .C("prune2R",as.double(as.vector((t(x)))),as.integer(nrows),Sets=integer(nrows))
-  coutput<-prune(as.vector((t(x))),nrows)
-  # result<-which(coutput$Sets==1)
-  result<-which(coutput==1)
-  return(result)
-}
 
 ###########################################################################################################
 ###################################PELT pruning function###################################################
@@ -677,15 +598,15 @@ peltprune=function(x,beta){
   return(which(minx<=(min(minx)+2*beta)))  
 }
 
-###########################################################################################################
-##################coverts null to na#######################################################################
-###########################################################################################################
 
-null2na<-function(vec){
-  if(is.null(vec)){vec<-NA}
-  return(vec)
+prune2.c<-function(x){
+  nrows<-dim(x)[[1]]
+  # coutput<- .C("prune2R",as.double(as.vector((t(x)))),as.integer(nrows),Sets=integer(nrows))
+  coutput<-prune(as.vector((t(x))),nrows)
+  # result<-which(coutput$Sets==1)
+  result<-which(coutput==1)
+  return(result)
 }
-
 
 ################end#######################
 
