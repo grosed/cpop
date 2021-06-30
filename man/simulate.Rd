@@ -2,7 +2,7 @@
 % Please edit documentation in R/cpop.R
 \name{simulate}
 \alias{simulate}
-\title{A function for generating simulated multivariate data}
+\title{A function for generating simulated data}
 \usage{
 simulate(x, changepoints, change.slope, sigma = 1)
 }

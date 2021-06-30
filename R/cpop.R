@@ -23,7 +23,7 @@ cpop.class<-function(y,x,beta,sigsquared,min.cost,changepoints,y_hat,residuals,p
 }
 
 
-#' A function for generating simulated multivariate data
+#' A function for generating simulated data
 #'
 #' @name simulate
 #'
