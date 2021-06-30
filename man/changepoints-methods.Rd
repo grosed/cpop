@@ -6,7 +6,7 @@
 \alias{changepoints,cpop.class-method}
 \title{Changepoint Locations}
 \usage{
-\S4method{changepoints}{cpop.class}(object)
+changepoints(object)
 }
 \arguments{
 \item{object}{An instance of an cpop S4 class produced by \code{\link{cpop}}.}
@@ -18,7 +18,6 @@ A data frame.
 Creates a data frame containing the locations of the changepoints in terms of the index of the data and the value of the location at that index.
 }
 \examples{
-
 library(cpop)
 # generate some test data
 set.seed(0)

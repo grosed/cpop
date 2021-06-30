@@ -241,8 +241,6 @@ setMethod("fitted",signature=list("cpop.class"),
 #'
 #' @rdname changepoints-methods
 #'
-if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {standardGeneric("changepoints")})}
-
 #' @name changepoints
 #' @param object  An instance of an cpop S4 class produced by \code{\link{cpop}}.
 #' 
@@ -253,7 +251,6 @@ if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {stan
 #' @aliases changepoints,cpop.class-method
 #'
 #' @examples
-#'
 #' library(cpop)
 #' # generate some test data
 #' set.seed(0)
@@ -268,6 +265,7 @@ if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {stan
 #' changepoints(res)
 #'
 #' @export
+setGeneric("changepoints",function(object) {standardGeneric("changepoints")})
 setMethod("changepoints",signature=list("cpop.class"),
           function(object)
           {
@@ -633,3 +631,4 @@ cpop.fit=function(y,x,out.changepoints,sigsquared)
   residuals=y-fit
   return(list(fit=fit,residuals=residuals,X=X,pars=beta))
 }
+
