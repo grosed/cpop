@@ -4,7 +4,7 @@
 \alias{cpop}
 \title{cpop}
 \usage{
-cpop(y, x = NULL, beta = 0, sigsquared = 1)
+cpop(y, x = NULL, beta = 2 * log(length(y)), sd = 1)
 }
 \arguments{
 \item{y}{A vector of length n containing the data.}
@@ -13,7 +13,7 @@ cpop(y, x = NULL, beta = 0, sigsquared = 1)
 
 \item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).}
 
-\item{sigsquared}{Estimate of residual variance. Can be a single numerical value or a vector of values for the case of varying residual variance. Default value is 1.}
+\item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
 }
 \value{
 An instance of an S4 class of type cpop.class.
@@ -37,7 +37,7 @@ res <- cpop(y,x,2*log(length(y)),0.1)
 plot(res)
 
 # without locations (note explicit paramater names)
-res <- cpop(y,beta=2*log(length(y)),sigsquared=0.1)
+res <- cpop(y,beta=2*log(length(y)),sd=0.1)
 plot(res)
 
 # stretch the end of the data

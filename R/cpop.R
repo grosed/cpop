@@ -7,9 +7,9 @@
 						  residuals="numeric",
 						  parameters="numeric",
 						  beta="numeric",
-						  sigsquared="numeric"))
+						  sd="numeric"))
 
-cpop.class<-function(y,x,beta,sigsquared,min.cost,changepoints,y_hat,residuals,parameters)
+cpop.class<-function(y,x,beta,sd,min.cost,changepoints,y_hat,residuals,parameters)
 {
     .cpop.class(y=y,
                 x=x,
@@ -19,8 +19,30 @@ cpop.class<-function(y,x,beta,sigsquared,min.cost,changepoints,y_hat,residuals,p
 		residuals=as.numeric(residuals),
 		parameters=parameters,
 		beta=beta,
-		sigsquared=sigsquared)
+		sd=sd)
 }
+
+
+#' A function for calculating the cost of a model fitted by cpop
+#'
+#' @name cost
+#'
+#' @description Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @rdname cost-methods
+#'
+#' @aliases cost,cpop.class-method
+#'
+#' @export
+setGeneric("cost",function(object) {standardGeneric("cost")})
+setMethod("cost",signature=list("cpop.class"),
+          function(object)
+          {
+            df <- fitted(object)
+            return(sum(object@residuals^2/object@sd^2)+2*log(length(object@x))*(length(object@changepoints)-2))
+          })	      
 
 
 #' A function for generating simulated data
@@ -164,7 +186,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
   cat("fitted values : ",'\n',sep="")
   print(df)
   cat('\n',"overall RSS = ",sum(df$RSS),'\n',sep="")
-  cat("cost = ",sum(object@residuals^2/object@sigsquared)+2*log(length(object@x))*(length(object@changepoints)-2),'\n',sep="")
+  cat("cost = ",cost(object),'\n',sep="")
   invisible()
 })
 
@@ -185,7 +207,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #' 
 #'
 #' @export
-if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
+setGeneric("show",function(object) {standardGeneric("show")})
 setMethod("show",signature=list("cpop.class"),function(object)
 {
     summary(object)
@@ -212,7 +234,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #' @aliases fitted,cpop.class-method
 #'
 #' @export
-if(!isGeneric("fitted")) {setGeneric("fitted",function(object) {standardGeneric("fitted")})}
+setGeneric("fitted",function(object) {standardGeneric("fitted")})
 setMethod("fitted",signature=list("cpop.class"),
           function(object)
           {
@@ -241,13 +263,10 @@ setMethod("fitted",signature=list("cpop.class"),
 #'
 #' @rdname changepoints-methods
 #'
-#' @name changepoints
 #' @param object  An instance of an cpop S4 class produced by \code{\link{cpop}}.
 #' 
 #' @return A data frame.
 #' 
-#' @rdname changepoints-methods
-#'
 #' @aliases changepoints,cpop.class-method
 #'
 #' @examples
@@ -265,6 +284,7 @@ setMethod("fitted",signature=list("cpop.class"),
 #' changepoints(res)
 #'
 #' @export
+if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {standardGeneric("changepoints")})}
 setGeneric("changepoints",function(object) {standardGeneric("changepoints")})
 setMethod("changepoints",signature=list("cpop.class"),
           function(object)
@@ -288,7 +308,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
-#' @param sigsquared Estimate of residual variance. Can be a single numerical value or a vector of values for the case of varying residual variance. Default value is 1. 
+#' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1. 
 #'
 #' @return An instance of an S4 class of type cpop.class.
 #'
@@ -310,7 +330,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' plot(res)
 #'
 #' # without locations (note explicit paramater names)
-#' res <- cpop(y,beta=2*log(length(y)),sigsquared=0.1)
+#' res <- cpop(y,beta=2*log(length(y)),sd=0.1)
 #' plot(res)
 #'
 #' # stretch the end of the data
@@ -319,25 +339,24 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' plot(res)
 #'  
 #' @export
-cpop<-function(y,x=NULL,beta=0,sigsquared=1)
+cpop<-function(y,x=NULL,beta=2*log(length(y)),sd=1)
 {
     if(is.null(x))
     {
        x<-1:length(y)
     }
-    if(length(sigsquared)!=length(y))
+    if(length(sd)!=length(y))
     {
-      sigsquared=rep(sigsquared[1],length(y))
+      sd=rep(sd[1],length(y))
     }
-    res<-CPOP.uneven_impl(y,x,beta,sigsquared,TRUE,FALSE)
+    sigsquared<-sd^2
+    res<-CPOP.uneven_impl(y,x,beta,sigsquared)
     fit<-cpop.fit(y,x,res$changepoints,sigsquared)
-    return(cpop.class(y,x,beta,sigsquared,res$min.cost,res$changepoints,fit$fit,fit$residuals,fit$pars))
+    return(cpop.class(y,x,beta,sd,res$min.cost,res$changepoints,fit$fit,fit$residuals,fit$pars))
 }
 
-CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=FALSE){
-  
-  # if(useCprune) dyn.load("prune2R.so")
-  
+CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
+{  
   n<-length(y)
   if(length(sigsquared)!=n) sigsquared=rep(sigsquared[1],n)
   
@@ -404,16 +423,9 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=
       new.CPvec=new.CPvec[keep1]
       ###########
       if(sum(keep1)>1){
-      
-       if(useCprune==F){
-       keep2=prune2b(new.coeffs.p)
-       }##find set of functions to keep
-       else if(useCprune==T){
-         keep2=prune2.c(new.coeffs.p) } 
-       else{stop("useCprune must be a TRUE or FALSE value")
-      }
+       keep2=prune2.c(new.coeffs.p)
        new.coeffs.p=new.coeffs.p[keep2,]
-        new.CPvec=new.CPvec[keep2]
+       new.CPvec=new.CPvec[keep2]
       }
     }else{
       new.coeffs.p=new.coeffs
@@ -431,12 +443,7 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1,useCprune=FALSE,printiteration=
     coeffs<-rbind(coeffs,new.coeffs.p)
     lencoo[taustar]<-length(coeffs[,1])
     lencur[taustar]<-length(new.coeffs.p)/5
-    #####################################################
-    if(printiteration==TRUE){
-    if(taustar%%100==0) cat("Iteration ",taustar,"Functions-stored",lencoo[taustar],lencur[taustar],"\n")}
-    else if(printiteration!=FALSE){stop("printiteration must be a TRUE or FALSE value")}
   }
-  
   coeffscurr<-coeffs[coeffs[,1]==n,] #matrix of coeffs for end time t=n
   if(!is.matrix(coeffscurr)){coeffscurr<-t(as.matrix(coeffscurr))} #makes sure coeffscurr is in the right format
   ttemp<-coeffscurr[,5]-(coeffscurr[,4]^2)/(4*coeffscurr[,3])
@@ -522,68 +529,7 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 ##version to avoid nested loops
 ##########################################################################################################
 
-prune2b=function(x){
-  Sets<-list()
-  n=length(x[,1])
-  vec=(1:n)
-  
-  tcurr= -Inf
-  
-  whichfun<-which(x[,3]==min(x[,3])) #which element of vec gives min value at -Infinity--smallest theta^2 coeff; then largest theta coeff; then smallest constant
-  whichfun<-whichfun[which(x[whichfun,4]==max(x[whichfun,4]))]
-  whichfun<-whichfun[which(x[whichfun,5]==min(x[whichfun,5]))]
-  
-  Sets[[whichfun]]<-c(tcurr)
-  diffcoeffs=matrix(NA,nrow=n,ncol=3)
-  intercepts=rep(NA,n)
-  disc=rep(NA,n)
-  while(length(vec)>1){ #while functions being considered is bigger than 1
-    intercepts[1:n]<-NA
-    diffcoeffs[1:(length(vec)),]<-t(t(x[vec,3:5])-x[whichfun,3:5]) #difference between coeffs at i and current function
-    disc[1:(length(vec))]<-diffcoeffs[1:(length(vec)),2]^2-4*diffcoeffs[1:(length(vec)),1]*diffcoeffs[1:(length(vec)),3] #discriminent of difference quad
-    
-    ind1=(1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]==0] ##disc>0 for quadratic to cross.
-    ind2=(1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]!=0] ##disc>0 for quadratic to cross.
-    
-    if(length(ind1)>0){
-      r1= - diffcoeffs[ind1,3]/diffcoeffs[ind1,2]
-      if(sum(r1>tcurr)>0){
-        intercepts[ind1[r1>tcurr]]= r1[r1>tcurr]
-      }
-    }
-    if(length(ind2)>0){
-      r1=(-diffcoeffs[ind2,2]-sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
-      r2=(-diffcoeffs[ind2,2]+sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
-      ##only want roots if > tcurr
-      if(sum(r1>tcurr)>0){
-        intercepts[ind2[r1>tcurr]]=r1[r1>tcurr]
-      }
-      if(sum(r1<=tcurr & r2>tcurr)>0){
-        intercepts[ind2[r1<=tcurr & r2>tcurr]]=r2[r1<=tcurr & r2>tcurr]  
-      }
-    }
-    
-    loggy<-!is.na(intercepts)
-    loggy[vec==whichfun]<-T
-    if(!sum(!is.na(intercepts))==0){ #if at least one intercept value is not na
-      tcurr<-min(intercepts,na.rm=T) #change tcurr to first intercept
-      whichfunnew<-vec[which(intercepts==tcurr)[1]] #whichfunnew is set as value which first intercept occurs     
-      Sets[[whichfun]]<-c(Sets[[whichfun]],tcurr) #add intercept to current function opt interval (to close it)
-      if(whichfunnew>length(Sets)){Sets[[whichfunnew]]<-c(tcurr)}else{
-        Sets[[whichfunnew]]<-c(Sets[[whichfunnew]],tcurr)} #add intercept to new fucntion interval (opening it)
-      whichfun<-whichfunnew #change current function to new function
-      
-    }
-    vec<-vec[loggy[(1:length(vec))]]
-    
-  }
-  Sets[[whichfun]]<-c(Sets[[whichfun]],Inf)
-  
-  
-  output1 <- do.call(rbind,lapply(Sets,length))
-  
-  return(which(output1[,1]!=0))
-}
+
 
 
 
