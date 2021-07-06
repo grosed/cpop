@@ -29,7 +29,7 @@ change.slope=c(0.2,-0.3,0.2,-0.1)
 x=1:200
 sig=1+x/200
 y<-simulate(x,changepoints,change.slope,sig)
-res<-cpop(y,x,2*log(length(x)),sig^2)
+res<-cpop(y,x,beta=2*log(length(x)),sig^2)
 summary(res)
 plot(res)
 

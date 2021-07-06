@@ -65,7 +65,7 @@ setMethod("cost",signature=list("cpop.class"),
 #' x=1:200
 #' sig=1+x/200
 #' y<-simulate(x,changepoints,change.slope,sig)
-#' res<-cpop(y,x,2*log(length(x)),sig^2)
+#' res<-cpop(y,x,beta=2*log(length(x)),sig^2)
 #' summary(res)
 #' plot(res)
 #'
@@ -307,6 +307,9 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' 
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
+#' @param grid TO DO !!!
+#' @param minseglen TO DO !!!
+#' @param prune.approx TO DO !!!
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
 #' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1. 
 #'
@@ -339,21 +342,30 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' plot(res)
 #'  
 #' @export
-cpop<-function(y,x=NULL,beta=2*log(length(y)),sd=1)
+cpop<-function(y,x=1:length(y),grid=x,beta=2*log(length(y)),sd=1,minseglen=0,prune.approx=FALSE)
 {
-    if(is.null(x))
-    {
-       x<-1:length(y)
-    }
     if(length(sd)!=length(y))
     {
       sd=rep(sd[1],length(y))
     }
     sigsquared<-sd^2
-    res<-CPOP.uneven_impl(y,x,beta,sigsquared)
+    if(minseglen != 0)
+    {
+      res<-cpop.grid.minseglen(y,x,grid,beta,sigsquared,minseg=minseglen,FALSE,prune.approx)
+    }
+    else
+    {
+      res<-cpop.grid(y,x,grid,beta,sigsquared)
+    }
     fit<-cpop.fit(y,x,res$changepoints,sigsquared)
     return(cpop.class(y,x,beta,sd,res$min.cost,res$changepoints,fit$fit,fit$residuals,fit$pars))
 }
+
+
+
+
+
+
 
 CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
 {  

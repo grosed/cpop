@@ -4,16 +4,30 @@
 \alias{cpop}
 \title{cpop}
 \usage{
-cpop(y, x = NULL, beta = 2 * log(length(y)), sd = 1)
+cpop(
+  y,
+  x = 1:length(y),
+  grid = x,
+  beta = 2 * log(length(y)),
+  sd = 1,
+  minseglen = 0,
+  prune.approx = FALSE
+)
 }
 \arguments{
 \item{y}{A vector of length n containing the data.}
 
 \item{x}{A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.}
 
+\item{grid}{TO DO !!!}
+
 \item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).}
 
 \item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
+
+\item{minseglen}{TO DO !!!}
+
+\item{prune.approx}{TO DO !!!}
 }
 \value{
 An instance of an S4 class of type cpop.class.

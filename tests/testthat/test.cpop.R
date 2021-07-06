@@ -514,6 +514,35 @@ test_that("test non default values of sd",
 })
 
 
+test_that("test for the effects of setting minseglen greater than shortest distance between changepoints",
+{
+
+   set.seed(1)
+   changepoints=c(0,25,50,100)
+   change.slope=c(0.2,-0.3,0.2,-0.1)
+   x=1:200
+   mu=change.in.slope.mean(x,changepoints,change.slope)
+   y=mu+rnorm(200)
+   out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=4)
+   out$changepoints
+   #[1]   0  22  52 95 200
+   out$min.cost
+   #[1] 199.0554
+   fit=CPOP.fit(y,x,out$changepoints,4)
+   #CHECK
+   cost<-sum(fit$residuals^2/4)+2*log(length(x))*(length(out$changepoints)-2)
+   cpop.res<-cpop(y,x,sd=2)
+   expect_equal(cost(cpop.res),cost)
+   cpop.minseglen.res<-cpop(y,x,sd=2,minseglen=22)
+   expect_equal(cost(cpop.res),cost(cpop.minseglen.res))
+   cpop.minseglen.res<-cpop(y,x,sd=2,minseglen=23)
+   expect_false(isTRUE(all.equal(cost(cpop.res),cost(cpop.minseglen.res))))
+
+})
+
+
+
+
 
 
 

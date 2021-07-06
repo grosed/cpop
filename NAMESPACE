@@ -12,3 +12,5 @@ exportMethods(fitted)
 exportMethods(cost)
 importFrom(Rcpp, evalCpp)
 importFrom(Rdpack,reprompt)
+
+
