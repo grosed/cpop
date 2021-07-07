@@ -188,16 +188,7 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
   return(coeff.new)
 }
 
-########################################################################################
-#####coeff.update in C##################
-########################################################################################
-coeff.update.c<-function(coeffs,S,SJ,SS,taustar,sigsquared,beta){
-  nrows<-dim(coeffs)
-  coeffs<-as.double(as.vector((t(coeffs))))
-  coutput<- .C("coeffupdate",as.double(t(coeffs)),as.double(S),as.double(SJ),as.double(SS),as.integer(taustar),as.double(sigsquared),as.double(beta),as.integer(nrows[1]),coeffnewlong=double(nrows[1]*nrows[2]))
-  result<-matrix(coutput$coeffnewlong,nrow=nrows[1],byrow=T)
-  return(result)
-}
+
 
 ############################################################################################################
 ##first prune of functions
