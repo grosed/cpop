@@ -10,6 +10,7 @@ exportMethods(show)
 exportMethods(changepoints)
 exportMethods(fitted)
 exportMethods(cost)
+exportMethods(estimate)
 importFrom(Rcpp, evalCpp)
 importFrom(Rdpack,reprompt)
 

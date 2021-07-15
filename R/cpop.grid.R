@@ -307,7 +307,7 @@ null2na<-function(vec){
 ################end#######################
 
    out<-CPOP.grid.impl(y,x,grid,beta,sigsquared,FALSE)
-   out$changepoints<-c(0,out$changepoints)
+   out$changepoints<-c(x[1],out$changepoints)
    return(out)
 
 }

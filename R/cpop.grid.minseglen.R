@@ -286,7 +286,7 @@ prune2.c<-function(x){
   return(result)
 }
 
-
+0
 
 ###########################################################################################################
 ###################################PELT pruning function###################################################
@@ -310,7 +310,7 @@ null2na<-function(vec){
 }
 
 out<-CPOP.grid.minseg(y,x,grid,minseg,beta,sigsquared,FALSE,FALSE)
-out$changepoints<-c(0,out$changepoints)
+out$changepoints<-c(x[1],out$changepoints)
 return(out)
 
 

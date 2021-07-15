@@ -330,56 +330,40 @@ change.in.slope.mean=function(x,changepoints,change.slope){
 }
 
 
-test_that("test that cpop predicts the correct changepoint locations",
+test_that("test that cpop predicts the correct RSS and changepoints using default parameter values",
 {
+   set.seed(1)
+   changepoints=c(0,25,50,100)
+   change.slope=c(0.2,-0.3,0.2,-0.1)
+   x=1:200
+   mu=change.in.slope.mean(x,changepoints,change.slope)
+   y<-mu+rnorm(200)
+   out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=1)
+   fit=CPOP.fit(y,x,out$changepoints,1)
+   RSS<-sum(fit$residuals^2)
+   cpop.res<-cpop(y,x)
+   cpop.RSS<-sum(fitted(cpop.res)$RSS)
+   expect_equal(cpop.RSS,RSS)
+   expect_equal(changepoints(cpop.res)$location,x[out$changepoints[2:4]])
+})
 
+test_that("test that cpop predicts the correct RSS and changepoints using non default beta value",
+{
    set.seed(1)
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
    x=1:200
    mu=change.in.slope.mean(x,changepoints,change.slope)
    y=mu+rnorm(200)
-   out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=1)
-   out$changepoints
-   #[1]   0  22  52 95 200
-   out$min.cost
-   #[1] 199.0554
+   out=CPOP.uneven.var(y,x,beta=2,sigsquared=1)
    fit=CPOP.fit(y,x,out$changepoints,1)
-   #CHECK
-   RSS<-sum(fit$residuals^2)+2*log(length(x))*(length(out$changepoints)-2)
-   expect_equal(RSS,RSS)
-   cpop.res<-cpop(y,x,beta=2*log(length(x)),sd=1)
-   expect_equal(changepoints(cpop.res)$index,out$changepoints[2:4])
-   set.seed(22)
-   n<-100
-   y<-rnorm(n)
-   cpop.res<-cpop(y,1:n,beta=2)
-   out<-CPOP.uneven.var(y,1:n,beta=2)
-   expect_equal(changepoints(cpop.res)$index,out$changepoints[2:14])
+   RSS<-sum(fit$residuals^2)
+   cpop.res<-cpop(y,x,beta=2)
+   cpop.RSS<-sum(fitted(cpop.res)$RSS)
+   expect_equal(cpop.RSS,RSS)
+   expect_equal(changepoints(cpop.res)$location,x[out$changepoints[2:24]])
 })
 
-
-test_that("test that cpop predicts the correct changepoint locations using default beta value",
-{
-
-   set.seed(1)
-   changepoints=c(0,25,50,100)
-   change.slope=c(0.2,-0.3,0.2,-0.1)
-   x=1:200
-   mu=change.in.slope.mean(x,changepoints,change.slope)
-   y=mu+rnorm(200)
-   out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=1)
-   out$changepoints
-   #[1]   0  22  52 95 200
-   out$min.cost
-   #[1] 199.0554
-   fit=CPOP.fit(y,x,out$changepoints,1)
-   #CHECK
-   RSS<-sum(fit$residuals^2)+2*log(length(x))*(length(out$changepoints)-2)
-   expect_equal(RSS,RSS)
-   cpop.res<-cpop(y,x,sd=1)
-   expect_equal(changepoints(cpop.res)$index,out$changepoints[2:4])
-})
 
 
 
@@ -516,20 +500,15 @@ test_that("test non default values of sd",
 
 test_that("test for the effects of setting minseglen greater than shortest distance between changepoints",
 {
-
    set.seed(1)
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
    x=1:200
-   mu=change.in.slope.mean(x,changepoints,change.slope)
-   y=mu+rnorm(200)
+   y<-simulate(x,changepoints,change.slope,1)
    out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=4)
    out$changepoints
-   #[1]   0  22  52 95 200
    out$min.cost
-   #[1] 199.0554
    fit=CPOP.fit(y,x,out$changepoints,4)
-   #CHECK
    cost<-sum(fit$residuals^2/4)+2*log(length(x))*(length(out$changepoints)-2)
    cpop.res<-cpop(y,x,sd=2)
    expect_equal(cost(cpop.res),cost)
@@ -537,7 +516,40 @@ test_that("test for the effects of setting minseglen greater than shortest dista
    expect_equal(cost(cpop.res),cost(cpop.minseglen.res))
    cpop.minseglen.res<-cpop(y,x,sd=2,minseglen=23)
    expect_false(isTRUE(all.equal(cost(cpop.res),cost(cpop.minseglen.res))))
+   cpop.minseglen.res<-cpop(y,x,sd=2,minseglen=26)
+   expect_equal(changepoints(cpop.minseglen.res)$location[1],110)
+})
 
+
+test_that("test use of non default value for grid",
+{
+   set.seed(1)
+   x<-1:200
+   changepoints<-c(0,25,50,100)
+   change.slope<-c(0.2,-0.3,0.2,-0.1)
+   y<-simulate(x,changepoints,change.slope,1)
+   cpop.res<-cpop(y,x,sd=2)
+   cpop.grid.res<-cpop(y,x,grid=c(0.5,1.5,99.0),sd=2)
+   expect_false(isTRUE(all.equal(cost(cpop.res),cost(cpop.grid.res))))
+   expect_equal(changepoints(cpop.grid.res)$location[1],99)
+})
+
+
+
+test_that("test use of non unit locations data",
+{
+   set.seed(0)
+   x <- seq(0,1,0.01)
+   n <- length(x)
+   sigma <- rep(0.1,n)
+   mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
+   y <- rnorm(n,mu,sigma)
+   # use the locations in x
+   out=CPOP.uneven.var(y,x,beta=2*log(length(y)),sigsquared=0.01)
+   cpop.res <- cpop(y,x,beta=2*log(length(y)),sd=0.1)
+   fit=CPOP.fit(y,x,out$changepoints,0.1)
+   RSS<-sum(fit$residuals^2)
+   expect_equal(sum(fitted(cpop.res)$RSS),RSS)
 })
 
 

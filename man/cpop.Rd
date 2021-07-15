@@ -19,15 +19,16 @@ cpop(
 
 \item{x}{A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.}
 
-\item{grid}{TO DO !!!}
+\item{grid}{An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.}
 
 \item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).}
 
 \item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
 
-\item{minseglen}{TO DO !!!}
+\item{minseglen}{The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.}
 
-\item{prune.approx}{TO DO !!!}
+\item{prune.approx}{Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may
+occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.}
 }
 \value{
 An instance of an S4 class of type cpop.class.

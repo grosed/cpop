@@ -1,26 +1,19 @@
 
-.cpop.class<-setClass("cpop.class",representation(min.cost="numeric",
-                                                  changepoints="numeric",
+.cpop.class<-setClass("cpop.class",representation(changepoints="numeric",
 						  y="numeric",
 						  x="numeric",
-						  y_hat="numeric",
-						  residuals="numeric",
-						  parameters="numeric",
 						  beta="numeric",
 						  sd="numeric"))
 
-cpop.class<-function(y,x,beta,sd,min.cost,changepoints,y_hat,residuals,parameters)
+cpop.class<-function(y,x,beta,sd,changepoints)
 {
     .cpop.class(y=y,
                 x=x,
-		min.cost=min.cost,
 		changepoints=changepoints,
-		y_hat=as.numeric(y_hat),
-		residuals=as.numeric(residuals),
-		parameters=parameters,
 		beta=beta,
 		sd=sd)
 }
+
 
 
 #' A function for calculating the cost of a model fitted by cpop
@@ -41,7 +34,7 @@ setMethod("cost",signature=list("cpop.class"),
           function(object)
           {
             df <- fitted(object)
-            return(sum(object@residuals^2/object@sd^2)+2*log(length(object@x))*(length(object@changepoints)-2))
+            return(sum(residuals(object)^2/object@sd^2)+2*log(length(object@x))*(length(object@changepoints)-2))
           })	      
 
 
@@ -102,30 +95,27 @@ simulate<-function(x,changepoints,change.slope,sigma=1)
 #' @export 
 setMethod("plot",signature=list("cpop.class"),function(x)
 {
-  obj <- x
-  df <- data.frame("x"=obj@x,"y"=obj@y)
-  cpts<-obj@changepoints
+  object <- x
+  df <- data.frame("x"=object@x,"y"=object@y)
+  cpts<-object@changepoints
   # appease ggplot2
   y <- NULL
   p <- ggplot(data=df, aes(x=x, y=y))
   p <- p + geom_point(alpha=0.3)
   if(length(cpts) > 2)
   {
-   cpts<-cpts[2:(length(cpts)-1)]
-   for(cpt in cpts)
+   for(cpt in cpts[2:(length(cpts)-1)])
    {
-     p <- p + geom_vline(xintercept = obj@x[cpt],color="red")
+     p <- p + geom_vline(xintercept = cpt,color="red")
    }
   }
   # appease ggplot2
-  xs <- ys <- xends <- yends <- NULL  
-  cpts<-obj@changepoints
-  cpts[1]<-1
-  df<-data.frame("xs"=obj@x[cpts][1:(length(obj@x[cpts])-1)],
-	         "ys"=obj@y_hat[cpts][1:(length(obj@y_hat[cpts])-1)],
-		 "xends"=obj@x[cpts][2:length(obj@x[cpts])],
-		 "yends"=obj@y_hat[cpts][2:length(obj@y_hat[cpts])])
-  p <- p + geom_segment(data=df,aes(x=xs,y=ys,xend=xends,yend=yends))
+  x0 <- y0 <- x1 <- y1 <- NULL  
+  #df<-data.frame("xs"=obj@x[cpts][1:(length(obj@x[cpts])-1)],
+  #	         "ys"=obj@y_hat[cpts][1:(length(obj@y_hat[cpts])-1)],
+  #		 "xends"=obj@x[cpts][2:length(obj@x[cpts])],
+  #		 "yends"=obj@y_hat[cpts][2:length(obj@y_hat[cpts])])
+  p <- p + geom_segment(data=fitted(object),aes(x=x0,y=y0,xend=x1,yend=y1))
   p <- p + theme_bw()
   return(p)
 })
@@ -165,19 +155,12 @@ setMethod("summary",signature=list("cpop.class"),function(object)
      {
        msg<-paste(msg," changepoints",sep="")
      }
-     msg<-paste(msg," detected at :",'\n',sep="")
+     msg<-paste(msg," detected at x = ",'\n',sep="")
      cat(msg)
-     msg<-"index : "
+     msg<-""
      for(cpt in object@changepoints[2:(length(object@changepoints)-1)])
      {
        msg<-paste(msg,cpt,sep=" ")
-     }
-     msg<-paste(msg,'\n',sep="")
-     cat(msg)
-     msg<-"location : "
-     for(location in object@x[object@changepoints[2:(length(object@changepoints)-1)]])
-     {
-       msg<-paste(msg,location,sep=" ")
      }
      msg<-paste(msg,'\n',sep="")
      cat(msg)
@@ -238,16 +221,19 @@ setGeneric("fitted",function(object) {standardGeneric("fitted")})
 setMethod("fitted",signature=list("cpop.class"),
           function(object)
           {
-	  cpts <- object@changepoints
-          cpts[1] <- 1
-  	  df<-data.frame("x0"=object@x[cpts][1:(length(object@x[cpts])-1)],
-			 "y0"=object@y_hat[cpts][1:(length(object@y_hat[cpts])-1)],
-		         "x1"=object@x[cpts][2:length(object@x[cpts])],
-		         "y1"=object@y_hat[cpts][2:length(object@y_hat[cpts])])
+	  x<-sort(unique(c(object@x,object@changepoints)))
+	  y_hat<-estimate(object,x)$y_hat
+	  cpts<-object@changepoints
+	  y_0<-unlist(Map(function(val) y_hat[which(x==val)],cpts))
+  	  df<-data.frame("x0"=cpts[1:(length(cpts)-1)],
+			 "y0"=y_0[1:(length(cpts)-1)],
+		         "x1"=cpts[2:length(cpts)],
+		         "y1"=y_0[2:length(y_0)])
           df <- cbind(df,data.frame("gradient"=(df$y1 - df$y0)/(df$x1 - df$x0)))
 	  df <- cbind(df,data.frame("intercept"=df$y1 - df$gradient * df$x1))
-	  cpts <- object@changepoints
-          rss<-as.numeric(Map(function(i,j) sum(object@residuals[i:j]*object@residuals[i:j]),cpts[1:(length(cpts)-1)]+1,cpts[2:length(cpts)]))
+	  residuals<-residuals(object)
+          rss<-unlist(Map(function(a,b) sum((residuals*residuals)[which(object@x >= a & object@x < b)]),cpts[1:(length(cpts)-1)],cpts[2:length(cpts)]))
+	  rss[length(rss)]<-rss[length(rss)]+(residuals*residuals)[length(residuals)]
 	  df <- cbind(df,data.frame("RSS"=rss))
 	  return(df)
           })	      
@@ -291,11 +277,11 @@ setMethod("changepoints",signature=list("cpop.class"),
           {
 	      if(length(object@changepoints) > 2)
 	      {
-	      	      df <- data.frame("index"=object@changepoints[2:(length(object@changepoints)-1)],"location"=object@x[object@changepoints[2:(length(object@changepoints)-1)]])	
+	      	      df <- data.frame("location"=object@changepoints[2:(length(object@changepoints)-1)])	
 	      }
 	      else
 	      {
-	      	      df <- data.frame("index"=integer(0),"locaion"=numeric(0))	
+	      	      df <- data.frame("location"=numeric(0))	
 	      }
 	      return(df)
           })	      
@@ -307,9 +293,10 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' 
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
-#' @param grid TO DO !!!
-#' @param minseglen TO DO !!!
-#' @param prune.approx TO DO !!!
+#' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
+#' @param minseglen The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.
+#' @param prune.approx Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may
+#' occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
 #' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1. 
 #'
@@ -357,13 +344,96 @@ cpop<-function(y,x=1:length(y),grid=x,beta=2*log(length(y)),sd=1,minseglen=0,pru
     {
       res<-cpop.grid(y,x,grid,beta,sigsquared)
     }
-    fit<-cpop.fit(y,x,res$changepoints,sigsquared)
-    return(cpop.class(y,x,beta,sd,res$min.cost,res$changepoints,fit$fit,fit$residuals,fit$pars))
+    return(cpop.class(y,x,beta,sd,res$changepoints))
 }
 
 
+design<-function(object,x=object@x)
+{
+  n=length(x)
+  cpts<-object@changepoints[-1]
+  p=length(cpts)
+  X=matrix(NA,nrow=n,ncol=p+1)
+  X[,1]=1
+  X[,2]=x-x[1]
+  if(p>1)
+  {
+    for(i in 1:(p-1))
+    {
+      X[,i+2]=pmax(rep(0,n),x-cpts[i])
+    }
+  }
+  return(X)
+}
+
+parameters<-function(object)
+{
+  n=length(object@y)
+  cpts<-object@changepoints[-1]	
+  p<-length(cpts)
+  W<-diag(object@sd^-2)
+  X<-design(object)
+  XTX<-t(X)%*%W%*%X
+  pars<-as.vector(solve(XTX)%*%t(X)%*%W%*%object@y)
+  return(pars)
+}
+
+#' A function for estimating the fit of a cpop model
+#'
+#' @name estimate
+#'
+#' @description Estimates the fit of a cpop model at the specified locations
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#' @param x Locations at which the fit is to be estimated. Default value is the x locations at which the cpop object was defined.
+#' @param ... Additional arguments.
+#'
+#' @rdname estimate-methods
+#'
+#' @aliases estimate,cpop.class-method
+#'
+#' @export
+setGeneric("estimate",function(object,x,...) {standardGeneric("estimate")})
+setMethod("estimate",signature=list("cpop.class"),
+          function(object,x=object@x)
+          {
+             return(data.frame("x"=x,"y_hat"=design(object,x)%*%parameters(object)))
+          })	      
 
 
+
+residuals<-function(object)
+{
+  object@y-design(object)%*%parameters(object)
+}
+
+
+cpop.fit<-function(y,x,out.changepoints,sigsquared)
+{
+  n=length(y)
+  if(length(sigsquared)!=n)
+  {
+     sigsquared=rep(sigsquared[1],n)
+  }
+  p=length(out.changepoints)
+  W=diag(sigsquared^-1)
+  X=matrix(NA,nrow=n,ncol=p+1)
+  X[,1]=1
+  X[,2]=x-x[1]
+  if(p>1)
+  {
+    for(i in 1:(p-1))
+    {
+      X[,i+2]=pmax(rep(0,n),x-out.changepoints[i])
+
+    }
+  }
+  XTX=t(X)%*%W%*%X
+  beta=as.vector(solve(XTX)%*%t(X)%*%W%*%y)
+  fit=X%*%beta
+  residuals=y-fit
+  return(list(fit=fit,residuals=residuals,X=X,pars=beta))
+}
 
 
 
@@ -567,26 +637,5 @@ prune2.c<-function(x){
 ################end#######################
 
 
-cpop.fit=function(y,x,out.changepoints,sigsquared)
-{
-  n=length(y)
-  if(length(sigsquared)!=n) sigsquared=rep(sigsquared[1],n)
-  p=length(out.changepoints)
-  W=diag(sigsquared^-1)
-  X=matrix(NA,nrow=n,ncol=p)
-  X[,1]=1
-  X[,2]=x-x[1]
-  if(p>2)
-  {
-    for(i in 2:(p-1))
-    {
-      X[,i+1]=c(rep(0,out.changepoints[i]-1),x[(out.changepoints[i]):n]-x[out.changepoints[i]])
-    }
-  }
-  XTX=t(X)%*%W%*%X
-  beta=as.vector(solve(XTX)%*%t(X)%*%W%*%y)
-  fit=X%*%beta
-  residuals=y-fit
-  return(list(fit=fit,residuals=residuals,X=X,pars=beta))
-}
+
 

@@ -9,6 +9,6 @@ test_that("test that simulate produces data consistently",
    x=1:200
    sig=1+x/200
    y<-simulate(x,changepoints,change.slope,sig)
-   data(test)
+   load("test.RData")
    expect_equal(y,test.simulate.y)
 })
