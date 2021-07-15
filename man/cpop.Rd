@@ -48,16 +48,16 @@ mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
 y <- rnorm(n,mu,sigma)
 
 # use the locations in x
-res <- cpop(y,x,2*log(length(y)),0.1)
+res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 plot(res)
 
 # without locations (note explicit paramater names)
-res <- cpop(y,beta=2*log(length(y)),sd=0.1)
+res <- cpop(y,beta=2*log(length(y)),sd=sigma)
 plot(res)
 
 # stretch the end of the data
 x[75:101] <- x[75:101] + seq(from=0,by=0.2,length.out=27)
-res <- cpop(y,x,2*log(length(y)),0.1)
+res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 plot(res)
  
 }

@@ -58,7 +58,7 @@ setMethod("cost",signature=list("cpop.class"),
 #' x=1:200
 #' sig=1+x/200
 #' y<-simulate(x,changepoints,change.slope,sig)
-#' res<-cpop(y,x,beta=2*log(length(x)),sig^2)
+#' res<-cpop(y,x,beta=2*log(length(x)),sd=sig)
 #' summary(res)
 #' plot(res)
 #'
@@ -266,7 +266,7 @@ setMethod("fitted",signature=list("cpop.class"),
 #' y <- rnorm(n,mu,sigma)
 #'
 #' # use the locations in x
-#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 #' changepoints(res)
 #'
 #' @export
@@ -316,16 +316,16 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' y <- rnorm(n,mu,sigma)
 #'
 #' # use the locations in x
-#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 #' plot(res)
 #'
 #' # without locations (note explicit paramater names)
-#' res <- cpop(y,beta=2*log(length(y)),sd=0.1)
+#' res <- cpop(y,beta=2*log(length(y)),sd=sigma)
 #' plot(res)
 #'
 #' # stretch the end of the data
 #' x[75:101] <- x[75:101] + seq(from=0,by=0.2,length.out=27)
-#' res <- cpop(y,x,2*log(length(y)),0.1)
+#' res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 #' plot(res)
 #'  
 #' @export

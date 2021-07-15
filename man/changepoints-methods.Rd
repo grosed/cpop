@@ -25,7 +25,7 @@ mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
 y <- rnorm(n,mu,sigma)
 
 # use the locations in x
-res <- cpop(y,x,2*log(length(y)),0.1)
+res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
 changepoints(res)
 
 }
