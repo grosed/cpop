@@ -34,7 +34,8 @@ setMethod("cost",signature=list("cpop.class"),
           function(object)
           {
             df <- fitted(object)
-            return(sum(residuals(object)^2/object@sd^2)+2*log(length(object@x))*(length(object@changepoints)-2))
+            # return(sum(residuals(object)^2/object@sd^2)+2*log(length(object@x))*(length(object@changepoints)-2))
+	    return(sum(residuals(object)^2/object@sd^2)+object@beta*(length(object@changepoints)-2))
           })	      
 
 
