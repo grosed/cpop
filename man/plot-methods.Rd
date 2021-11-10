@@ -3,10 +3,10 @@
 \docType{methods}
 \name{plot}
 \alias{plot}
-\alias{plot,cpop.class-method}
+\alias{plot,cpop.class,ANY-method}
 \title{Visualisation of Changepoint Locations and Data}
 \usage{
-\S4method{plot}{cpop.class}(x)
+\S4method{plot}{cpop.class,ANY}(x)
 }
 \arguments{
 \item{x}{An instance of an cpop S4 class produced by \code{\link{cpop}}.}

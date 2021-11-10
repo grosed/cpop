@@ -1,15 +1,15 @@
 Package: cpop
 Type: Package
-Title: Detects Multiple Changes in Slope in Univariate Time-Series 
-Version: 0.0.0
-Date: 2021-07-15
-Author: Paul Fearhead <p.fearnhead@lancaster.ac.uk> [aut], Daniel Grose [cre,ctb]
+Title: Detection of Multiple Changes in Slope in Univariate Time-Series 
+Version: 1.0.0
+Date: 2021-11-10
 Maintainer: Daniel Grose <dan.grose@lancaster.ac.uk>
+Authors@R: c(person("Daniel", "Grose", role = c("aut", "cre"),email = "dan.grose@lancaster.ac.uk"),
+             person("Paul", "Fearnhead", role = "aut",email = "p.fearnhead@lancaster.ac.uk"))
 Description: Detects Multiple Changes in Slope in Univariate Time-Series.
 License: GPL (>= 2)
 Depends: R (>= 3.5.0)
 Imports: Rdpack,methods, Rcpp (>= 0.12.13), ggplot2,crops
-Remotes: github::grosed/crops
 LinkingTo: Rcpp
 Suggests: testthat
 RoxygenNote: 7.1.1
