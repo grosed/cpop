@@ -169,7 +169,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
   cat("fitted values : ",'\n',sep="")
   print(df)
   cat('\n',"overall RSS = ",sum(df$RSS),'\n',sep="")
-  cat("cost = ",cost(object),'\n',sep="")
+  cat("cost = ",cost(object),'\n\n',sep="")
   invisible()
 })
 

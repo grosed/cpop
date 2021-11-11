@@ -39,7 +39,8 @@ An instance of an S4 class of type cpop.crops.class which extends the crops.clas
 }
 \description{
 Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
-For details of the \code{crops}function see the \pkg{crops package}.
+For details of the \code{crops}function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
+\code{\link[crops]{segmentations}}, \code{\link[crops]{subset}}, and \code{\link[crops]{unique}}.
 }
 \examples{
 
@@ -52,9 +53,14 @@ mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
 y <- rnorm(n,mu,sigma)
 # calculate the changepoint locations and cost over a range of penalty values
 res <- cpop.crops(y,x,sd=sigma,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
+summary(res)
 
 # plot the results
 plot(res)
+plot(unique(res)) 
+
+# show the segmentations
+
 }
 \references{
 \insertRef{crops-article}{crops}

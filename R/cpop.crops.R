@@ -6,24 +6,13 @@ cpop.crops.class<-function(crops.result,y,x)
    .cpop.crops.class(crops.result,y=y,x=x)    
 }
 
-
-
-#setMethod("plot",signature=list("cpop.crops.class","missing"),
-#          function(x)
-#          {
-#            object <- as(x,"crops.class")
-#	    return(plot(object))
-#            # return(plot(object,data.frame("x"=x@x,"y"=x@y)))
-#          })
-
-
-
 #' Calculate changepoint locations over a range of penalty values
 #'
 #' @name cpop.crops
 #'
 #' @description Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
-#' For details of the \code{crops}function see the \pkg{crops package}. 
+#' For details of the \code{crops}function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
+#' \code{\link[crops]{segmentations}}, \code{\link[crops]{subset}}, and \code{\link[crops]{unique}}.    
 #'
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
@@ -52,10 +41,15 @@ cpop.crops.class<-function(crops.result,y,x)
 #' y <- rnorm(n,mu,sigma)
 #' # calculate the changepoint locations and cost over a range of penalty values
 #' res <- cpop.crops(y,x,sd=sigma,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
+#' summary(res)
 #'
 #' # plot the results
 #' plot(res)
-#
+#' plot(unique(res)) 
+#'
+#' # show the segmentations
+#  segmentations(res)
+#'
 #' @references \insertRef{crops-article}{crops}
 #' @references \insertRef{crops-package}{cpop}
 #' @export

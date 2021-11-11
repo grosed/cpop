@@ -8,8 +8,8 @@ Authors@R: c(person("Daniel", "Grose", role = c("aut", "cre"),email = "dan.grose
              person("Paul", "Fearnhead", role = "aut",email = "p.fearnhead@lancaster.ac.uk"))
 Description: Detects Multiple Changes in Slope in Univariate Time-Series.
 License: GPL (>= 2)
-Depends: R (>= 3.5.0)
-Imports: Rdpack,methods, Rcpp (>= 0.12.13), ggplot2,crops
+Depends: R (>= 3.5.0),crops
+Imports: Rdpack,methods, Rcpp (>= 0.12.13), ggplot2
 LinkingTo: Rcpp
 Suggests: testthat
 RoxygenNote: 7.1.1
