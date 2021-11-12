@@ -15,7 +15,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #' \code{\link[crops]{segmentations}}, \code{\link[crops]{subset}}, and \code{\link[crops]{unique}}.    
 #'
 #' @param y A vector of length n containing the data.
-#' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
+#' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
 #' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
 #' @param beta_min Minimum value of the penalty range to be searched. Default is \code{1.5*log(length(y))}
 #' @param beta_max Maximum value of the penalty range to be searched. Default is \code{2.5*log(length(y))} 

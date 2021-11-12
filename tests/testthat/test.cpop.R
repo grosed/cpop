@@ -1,7 +1,4 @@
-
-
 context("testing cpop")
-
 
 ##dyn.load("coeff.updateR.so")
 
@@ -347,8 +344,32 @@ test_that("test that cpop predicts the correct RSS and changepoints using defaul
    expect_equal(changepoints(cpop.res)$location,x[out$changepoints[2:4]])
 })
 
-test_that("test that cpop predicts the correct RSS and changepoints using non default beta value",
+
+
+
+
+
+test_that("test 1 - test that cpop predicts the correct RSS and changepoints using default parameter values",
 {
+
+   set.seed(1)
+   changepoints=c(0,25,50,100)
+   change.slope=c(0.2,-0.3,0.2,-0.1)
+   x=1:200
+   mu=change.in.slope.mean(x,changepoints,change.slope)
+   y<-mu+rnorm(200)
+   out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=1)
+   fit=CPOP.fit(y,x,out$changepoints,1)
+   RSS<-sum(fit$residuals^2)    
+   cpop.res<-cpop(y,x)
+   cpop.RSS<-sum(fitted(cpop.res)$RSS)
+   expect_equal(cpop.RSS,RSS)
+   expect_equal(changepoints(cpop.res)$location,x[out$changepoints[2:4]])
+})
+
+test_that("test 2 - test that cpop predicts the correct RSS and changepoints using non default beta value",
+{
+
    set.seed(1)
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
@@ -368,7 +389,7 @@ test_that("test that cpop predicts the correct RSS and changepoints using non de
 
 
 
-test_that("test that fitted predicts the correct RSS",
+test_that("test 3 - test that fitted predicts the correct RSS",
 {
 
    set.seed(1)
@@ -391,7 +412,7 @@ test_that("test that fitted predicts the correct RSS",
 })
 
 
-test_that("test that fitted predicts the correct RSS",
+test_that("test 4 - test that fitted predicts the correct RSS",
 {
 
    set.seed(1)
@@ -414,7 +435,7 @@ test_that("test that fitted predicts the correct RSS",
 })
 
 
-test_that("test that results from fitted can be used to calculate the cost correctly",
+test_that("test 5 - test that results from fitted can be used to calculate the cost correctly",
 {
 
    set.seed(1)
@@ -437,7 +458,7 @@ test_that("test that results from fitted can be used to calculate the cost corre
 
 
 
-test_that("test default value of sd",
+test_that("test 6 - test default value of sd",
 {
 
    set.seed(1)
@@ -459,7 +480,7 @@ test_that("test default value of sd",
 })
 
 
-test_that("test non default values of sd",
+test_that("test 7 - test non default values of sd",
 {
 
    set.seed(1)
@@ -478,7 +499,6 @@ test_that("test non default values of sd",
    cost<-sum(fit$residuals^2/2)+2*log(length(x))*(length(out$changepoints)-2)
    cpop.res<-cpop(y,x,sd=sqrt(2))
    expect_equal(cost(cpop.res),cost)
-
    set.seed(1)
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
@@ -498,8 +518,9 @@ test_that("test non default values of sd",
 })
 
 
-test_that("test for the effects of setting minseglen greater than shortest distance between changepoints",
+test_that("test 8 - test for the effects of setting minseglen greater than shortest distance between changepoints",
 {
+
    set.seed(1)
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
@@ -521,8 +542,9 @@ test_that("test for the effects of setting minseglen greater than shortest dista
 })
 
 
-test_that("test use of non default value for grid",
+test_that("test 9 - test use of non default value for grid",
 {
+
    set.seed(1)
    x<-1:200
    changepoints<-c(0,25,50,100)
@@ -536,8 +558,9 @@ test_that("test use of non default value for grid",
 
 
 
-test_that("test use of non unit locations data",
+test_that("test 10 - test use of non unit locations data",
 {
+
    set.seed(0)
    x <- seq(0,1,0.01)
    n <- length(x)
@@ -551,6 +574,70 @@ test_that("test use of non unit locations data",
    RSS<-sum(fit$residuals^2)
    expect_equal(sum(fitted(cpop.res)$RSS),RSS)
 })
+
+
+
+
+
+test_that("test 11 - default x values ",
+{
+ # generate some test data
+ set.seed(0)
+ x <- seq(0,1,0.01)
+ n <- length(x)
+ sigma <- rep(0.1,n)
+ mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
+ y <- rnorm(n,mu,sigma)
+ 
+ # use the locations in x
+ res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+ fitted.base <- fitted(res)
+ cpts.base <- changepoints(res)
+ estimates.base <- estimate(res,x)
+
+ # without locations (note explicit paramater names)
+ res <- cpop(y,beta=2*log(length(y)),sd=sigma)
+ expect_equal(estimate(res,1:length(y)-1)$y_hat,estimates.base$y_hat)
+ expect_equal(fitted(res)[,7],fitted.base[,7])
+ 
+})
+
+
+test_that("test 12 - shifted x values ",
+{
+ # generate some test data
+ set.seed(0)
+ x <- seq(0,1,0.01)
+ n <- length(x)
+ sigma <- rep(0.1,n)
+ mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
+ y <- rnorm(n,mu,sigma)
+ 
+ # use the locations in x
+ res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+ fitted.base <- fitted(res)
+ cpts.base <- changepoints(res)
+ estimates.base <- estimate(res,x)
+
+ x <- x + 1
+ res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+ expect_equal(estimate(res,x)$y_hat,estimates.base$y_hat)
+ expect_equal(fitted(res)[,7],fitted.base[,7])
+
+ x <- x - 1
+ for(i in 1:10)
+ {
+   x <- x + rnorm(1,0,10)
+   res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+   expect_equal(estimate(res,x)$y_hat,estimates.base$y_hat)
+   expect_equal(fitted(res)[,7],fitted.base[,7])
+ }
+
+})
+
+
+
+
 
 
 

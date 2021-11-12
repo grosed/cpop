@@ -41,7 +41,7 @@ std::vector<double> calc_B(const std::vector<double>& SX2,
 
   std::transform(Xs.begin(),Xs.end(),Sstar.begin(),B.begin(),
 
-		 [&SX2,&SX,&Xs,&taustar,&SP,&Xt](auto& xs, auto& sstar)
+		 [&SX2,&SX,&taustar,&SP,&Xt](auto& xs, auto& sstar)
 		 {
 
 		   return (Xt+xs)*(SX[taustar] - SX[sstar]) - (SP[taustar] - SP[sstar])*Xt*xs - (SX2[taustar] - SX2[sstar]);

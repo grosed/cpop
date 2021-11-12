@@ -292,7 +292,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #'  Algorithm for finding the best segmentation of data for a change-in-slope model.
 #' 
 #' @param y A vector of length n containing the data.
-#' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.
+#' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
 #' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
 #' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.
@@ -329,7 +329,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' plot(res)
 #'  
 #' @export
-cpop<-function(y,x=1:length(y),grid=x,beta=2*log(length(y)),sd=1,minseglen=0,prune.approx=FALSE)
+cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=1,minseglen=0,prune.approx=FALSE)
 {
     if(length(sd)!=length(y))
     {

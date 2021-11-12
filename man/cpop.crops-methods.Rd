@@ -19,7 +19,7 @@ cpop.crops(
 \arguments{
 \item{y}{A vector of length n containing the data.}
 
-\item{x}{A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)} are assumed.}
+\item{x}{A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.}
 
 \item{grid}{An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.}
 

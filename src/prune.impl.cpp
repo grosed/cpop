@@ -59,8 +59,8 @@ void prune_impl(const double* x, const int* nrows, int* Sets)
       }
     }
 
-   
- int logicint[*nrows]; /*1 indicates NA*/
+ std::vector<int> logicint(*nrows);  
+ // int logicint[*nrows]; /*1 indicates NA*/
  for(i=0;i<*nrows;i++){
    logicint[i]=1;
    *(Sets+i)=0;
@@ -68,7 +68,8 @@ void prune_impl(const double* x, const int* nrows, int* Sets)
  *(Sets+whichfun)=1;
  int sum=*nrows;
     while(sum>0){
-      double intercepts[*nrows];
+      std::vector<double> intercepts(*nrows);  
+      // double intercepts[*nrows];
       logicint[whichfun]=0;
       intercepts[whichfun]=0;
       for (i=0;i<*nrows;i++){
@@ -123,7 +124,7 @@ void prune_impl(const double* x, const int* nrows, int* Sets)
       }
       int j;
       sum=0;
-      int whichfunnew;
+      int whichfunnew = 0;
       double minimum=LONG_MAX;
       for(j=0;j<*nrows;j++){
 	if(logicint[j]!=0){
