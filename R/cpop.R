@@ -401,11 +401,30 @@ setMethod("estimate",signature=list("cpop.class"),
           })	      
 
 
+#' Extracts residuals from a cpop model
+#'
+#' @name residuals
+#'
+#' @description Extracts residuals from a cpop model
+#'
+#' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @rdname residuals-methods
+#'
+#' @aliases residuals,cpop.class-method
+#'
+#' @export
+setMethod("residuals",signature=list("cpop.class"),
+          function(object)
+          {
+	    object@y-design(object)%*%parameters(object)
+          })	      
 
-residuals<-function(object)
-{
-  object@y-design(object)%*%parameters(object)
-}
+
+#residuals<-function(object)
+#{
+#  object@y-design(object)%*%parameters(object)
+#}
 
 
 cpop.fit<-function(y,x,out.changepoints,sigsquared)
