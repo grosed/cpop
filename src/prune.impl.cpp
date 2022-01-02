@@ -17,10 +17,13 @@ using namespace Rcpp;
 
 bool cmp_double(const double& a, const double& b)
 {
+  return a == b;
+  /*
   static constexpr auto epsilon = std::numeric_limits<double>::epsilon();
     if (std::abs(a - b) <= epsilon)
         return true;
     return std::abs(a - b) <= epsilon * std::max(std::abs(a), std::abs(b));
+  */
 }
 
 
@@ -67,8 +70,8 @@ void prune_impl(const double* x, const int* nrows, int* Sets)
  }
  *(Sets+whichfun)=1;
  int sum=*nrows;
-    while(sum>0){
-      std::vector<double> intercepts(*nrows);  
+    while(sum>1){
+      std::vector<double> intercepts(*nrows,0.0);  
       // double intercepts[*nrows];
       logicint[whichfun]=0;
       intercepts[whichfun]=0;
@@ -125,7 +128,8 @@ void prune_impl(const double* x, const int* nrows, int* Sets)
       int j;
       sum=0;
       int whichfunnew = 0;
-      double minimum=LONG_MAX;
+      // double minimum=LONG_MAX;
+      double minimum=DBL_MAX;
       for(j=0;j<*nrows;j++){
 	if(logicint[j]!=0){
 	  sum=sum+logicint[j];

@@ -15,7 +15,7 @@ std::vector<double> calc_A(const std::vector<double>& SX2,
   std::vector<double> A(Sstar.size());
   std::transform(Xs.begin(),Xs.end(),Sstar.begin(),A.begin(),
 
-		 [&SX2,&SX,&Xs,&taustar,&SP](auto& xs, auto& sstar)
+		 [&SX2,&SX,&taustar,&SP](auto& xs, auto& sstar)
 		 {
 		   return SX2[taustar] - SX2[sstar] - 2*xs*(SX[taustar] - SX[sstar]) + (SP[taustar] - SP[sstar])*xs*xs;
 		 });
@@ -66,7 +66,7 @@ std::vector<double> calc_C(const std::vector<double>& Xs,
   std::vector<double> C(Sstar.size());
   std::transform(Xs.begin(),Xs.end(),Sstar.begin(),C.begin(),
 
-		 [&SXY,&S,&Xs,&taustar](auto& xs, auto& sstar)
+		 [&SXY,&S,&taustar](auto& xs, auto& sstar)
 		 {
 		   return SXY[taustar] - SXY[sstar] - xs*(S[taustar] - S[sstar]);
 		 });

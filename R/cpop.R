@@ -202,7 +202,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #'
 #' @name fitted
 #'
-#' @description Extracts the fitted valus produced by \code{\link{cpop}}.
+#' @description Extracts the fitted values produced by \code{\link{cpop}}.
 #'
 #' @docType methods
 #'
@@ -210,7 +210,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #'
 #' @return A data frame containing the endpoint coordinates for each line segment fitted between
 #' the detected changepoints. The data frame also contains the gradient and intercept values
-#' for each segment and the corresponding residual sum of squares (RSS)..
+#' for each segment and the corresponding residual sum of squares (RSS).
 #'
 #' @rdname fitted-methods
 #'

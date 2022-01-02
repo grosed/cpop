@@ -7,14 +7,13 @@
 \format{
 A dataframe with 5 columns and 247 rows. The first column is wavenumber (cycles per metre). 
 The other columns are the power spectra values for different months (Feb depth 100m, Aug depth 100m, Feb depth 50m, and  Aug depth 50m).
-The original data can be downloaded from  https://zenodo.org/record/4615129/files/spectra_36hr_05_1.25km_all.mat?download=1
+The original data is documented in \insertRef{richards-whitt-data}{cpop}
 }
 \usage{
 data(wavenumber_spectra)
 }
 \description{
-Data of power spectra of velocity as a function of wavenumber obtained from climate models of the Atlantic Ocean at two depths and for two different months \insertCite{richards-whitt}{cpop}
-\insertCite{richards_kelvin_j_2020_4615129}{cpop}.
+Data of power spectra of velocity as a function of wavenumber obtained from climate models of the Atlantic Ocean at two depths and for two different months. See \insertRef{richards-whitt}{cpop}
 }
 \examples{
 library(cpop)
@@ -30,8 +29,11 @@ gather(variable,log_power_spectra,-log_wavenumber) \%>\%
 ggplot(aes(x=log_wavenumber, y=log_power_spectra, colour=variable)) +
 geom_line() + 
 theme_bw()
+
 }
 \references{
-\insertRef{richards-whitt}{cpop} \insertRef{richards_kelvin_j_2020_4615129}{cpop}
+\insertRef{richards-whitt}{cpop}
+
+\insertRef{richards-whitt-data}{cpop}
 }
 \keyword{datasets}

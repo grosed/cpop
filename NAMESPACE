@@ -1,6 +1,7 @@
 useDynLib(cpop)
 import(ggplot2)
 import(crops)
+import(pacman)
 importFrom(methods,new)
 importFrom(stats,rnorm)
 export(cpop)
