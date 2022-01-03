@@ -80,15 +80,16 @@ std::vector<double> calc_C(const std::vector<double>& Xs,
 }
 
 
+// note - the variabe rSS should be SS - but solaris c++ uses SS as a macro !!
 std::vector<double> calc_D(const int& taustar,
 			   const std::vector<int>& Sstar,
-			   const std::vector<double>& SS)
+			   const std::vector<double>& rSS)
 {
   std::vector<double> D(Sstar.size());
   std::transform(Sstar.begin(),Sstar.end(),D.begin(),
-		 [&SS,&taustar](auto& sstar)
+		 [&rSS,&taustar](auto& sstar)
 		 {
-		   return SS[taustar] - SS[sstar];
+		   return rSS[taustar] - rSS[sstar];
 		 });
   return D;
   
