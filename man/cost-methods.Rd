@@ -11,5 +11,5 @@ cost(object)
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 }
 \description{
-Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values
+Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values.
 }

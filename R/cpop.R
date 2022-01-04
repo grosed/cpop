@@ -20,7 +20,7 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 #'
 #' @name cost
 #'
-#' @description Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values
+#' @description Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values.
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #'
@@ -382,7 +382,7 @@ parameters<-function(object)
 #'
 #' @name estimate
 #'
-#' @description Estimates the fit of a cpop model at the specified locations
+#' @description Estimates the fit of a cpop model at the specified locations.
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #' @param x Locations at which the fit is to be estimated. Default value is the x locations at which the cpop object was defined.
@@ -405,7 +405,7 @@ setMethod("estimate",signature=list("cpop.class"),
 #'
 #' @name residuals
 #'
-#' @description Extracts residuals from a cpop model
+#' @description Extracts residuals from a cpop model.
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #'

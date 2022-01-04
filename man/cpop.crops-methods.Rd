@@ -39,7 +39,7 @@ An instance of an S4 class of type cpop.crops.class which extends the crops.clas
 }
 \description{
 Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
-For details of the \code{crops}function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
+For details of the \code{crops} function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
 \code{\link[crops]{segmentations}}, \code{\link[crops]{subset}}, and \code{\link[crops]{unique}}.
 }
 \examples{

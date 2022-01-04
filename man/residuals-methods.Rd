@@ -11,5 +11,5 @@
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 }
 \description{
-Extracts residuals from a cpop model
+Extracts residuals from a cpop model.
 }

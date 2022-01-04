@@ -15,5 +15,5 @@ estimate(object, x, ...)
 \item{...}{Additional arguments.}
 }
 \description{
-Estimates the fit of a cpop model at the specified locations
+Estimates the fit of a cpop model at the specified locations.
 }
