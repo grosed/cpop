@@ -9,8 +9,12 @@ Authors@R: c(person("Daniel", "Grose", role = c("aut", "cre"),email = "dan.grose
 Description: Detects multiple changes in slope using the CPOP dynamic programming approach of Fearnhead, Maidstone, and Letchford (2018) <doi:10.1080/10618600.2018.1512868>. This method finds the best continuous piecewise linear fit to data under a criterion that measures fit to data using the residual sum of squares, but penalizes complexity based on an L0 penalty on changes in slope. 
 License: GPL (>= 2)
 Depends: R (>= 3.5.0),crops,pacman
-Imports: Rdpack,methods, Rcpp (>= 0.12.13), ggplot2
+Imports: Rdpack,methods, Rcpp (>= 0.12.13), ggplot2,mathjaxr
 LinkingTo: Rcpp
-Suggests: testthat
+Suggests: 
+    rmarkdown,
+    knitr,
+    testthat
 RoxygenNote: 7.1.2
-RdMacros: Rdpack
+RdMacros: Rdpack,mathjaxr
+VignetteBuilder: knitr
