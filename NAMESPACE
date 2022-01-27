@@ -16,6 +16,7 @@ exportMethods(fitted)
 exportMethods(cost)
 exportMethods(estimate)
 exportMethods(residuals)
+exportMethods(cpop.crops.models)
 importFrom(Rcpp, evalCpp)
 importFrom(Rdpack,reprompt)
 

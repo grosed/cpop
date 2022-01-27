@@ -67,7 +67,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
                   ncpts <- nrow(cpts)
                   locations <- cpts$location
                   cost <- cost(res) - ncpts*beta
-                  return(list(cost,locations))
+                  return(list(cost,locations,res))
                }
               )
     }
@@ -75,3 +75,46 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
     res.crops <- crops(CPT,beta_min,beta_max)
     return(cpop.crops.class(res.crops,y,x))
 }
+
+
+#' Obtain the cpop models created by cpop.crops
+#'
+#' @name cpop.crops.models
+#'
+#' @description Obtains a list of models corresponding to each of the beta (penalty) values considered during a \code{cpop.crops} analysis. 
+#'
+#' @param object An S4 object of type \code{cpop.crops.class} produced by \code{cpop.crops}.
+#'
+#' @return A list of S4 \code{cpop.class} objects corresponding to the beta values considered by a \code{cpop.crops} analysis.
+#'
+#' @rdname cpop.crops.models-methods
+#'
+#' @aliases cpop.crops.models,cpop.crops.class-method
+#'
+#' @examples
+#' set.seed(1)
+#' n <- 500
+#' x <- 1:n
+#' m <- 10
+#' mu <- simulate(x,changepoints=(n/(m+1))*0:m,change.slope=c(0.1,0.2*(-1)^(1:m)),sigma=0)
+#' epsilon <- rnorm(n+2)
+#' y <- mu+(epsilon[1:n]+epsilon[2:(n+1)]+epsilon[3:(n+2)])/sqrt(3)
+#' res.crops <- cpop.crops(y,x,beta_min=0.5*log(length(y)),beta_max=40*log(length(y)))
+#' res.crops <- unique(res.crops)
+#' models <- cpop.crops.models(res.crops)
+#' for(m in models)
+#' {
+#'   plot(m)
+#' }
+#'
+#' @seealso \code{\link{cpop.crops}},\code{\link[crops]{crops}}
+#'
+#' @references \insertRef{crops-article}{crops}
+#' @references \insertRef{crops-package}{cpop}
+#' @export
+setGeneric("cpop.crops.models",function(object) {standardGeneric("cpop.crops.models")})
+setMethod("cpop.crops.models",signature=list("cpop.crops.class"),
+function(object)
+{
+   return(Map(function(beta) as.list(object@method(beta))[[3]] ,as.list(object@betas)))
+})
