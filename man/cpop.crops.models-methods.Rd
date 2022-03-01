@@ -25,7 +25,6 @@ mu <- simulate(x,changepoints=(n/(m+1))*0:m,change.slope=c(0.1,0.2*(-1)^(1:m)),s
 epsilon <- rnorm(n+2)
 y <- mu+(epsilon[1:n]+epsilon[2:(n+1)]+epsilon[3:(n+2)])/sqrt(3)
 res.crops <- cpop.crops(y,x,beta_min=0.5*log(length(y)),beta_max=40*log(length(y)))
-res.crops <- unique(res.crops)
 models <- cpop.crops.models(res.crops)
 for(m in models)
 {

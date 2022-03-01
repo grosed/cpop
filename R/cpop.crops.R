@@ -12,7 +12,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' @description Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
 #' For details of the \code{crops} function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
-#' \code{\link[crops]{segmentations}}, \code{\link[crops]{subset}}, and \code{\link[crops]{unique}}.    
+#' \code{\link[crops]{segmentations}} and \code{\link[crops]{subset}}.    
 #'
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
@@ -44,8 +44,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #' summary(res)
 #'
 #' # plot the results
-#' plot(res)
-#' plot(unique(res)) 
+#' plot(res) 
 #'
 #' # show the segmentations
 #  segmentations(res)
@@ -73,6 +72,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
     }
     CPT<-CPT.init(y,x,grid,sd,minseglen,prune.approx)
     res.crops <- crops(CPT,beta_min,beta_max)
+    res.crops <- unique(res.crops)
     return(cpop.crops.class(res.crops,y,x))
 }
 
@@ -100,7 +100,6 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #' epsilon <- rnorm(n+2)
 #' y <- mu+(epsilon[1:n]+epsilon[2:(n+1)]+epsilon[3:(n+2)])/sqrt(3)
 #' res.crops <- cpop.crops(y,x,beta_min=0.5*log(length(y)),beta_max=40*log(length(y)))
-#' res.crops <- unique(res.crops)
 #' models <- cpop.crops.models(res.crops)
 #' for(m in models)
 #' {

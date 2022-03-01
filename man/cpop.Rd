@@ -35,11 +35,11 @@ An instance of an S4 class of type cpop.class.
 }
 \description{
 \loadmathjax{} The CPOP algorithm fits a change-in-slope model to data. It assumes that we have we have data points \mjeqn{(y_1,x_1),\ldots,(y_n,x_n)}{(y_1,x_1),...,(y_n,x_n)}, ordered
-so that \mjeqn{x_1<x_2<\cdots<x_n}{x_1<x_2<...<x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
+so that \mjeqn{x_1 < x_2 < \cdots < x_n}{x_1 < x_2 < ... < x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
 plus noise where the signal is modelled as a continuous piecewise linear function of \mjeqn{x}{x}. That is \mjdeqn{y_i=f(x_i)+\epsilon_i}{y_i=f(x_i)+e_i} where \mjeqn{f(x)}{f(x)} is a continuous
 piecewise linear function.
 
-To estimate the function \mjeqn{f(x)}{f(x)} we specify a set of \mjeqn{N}{N} grid points, \mjeqn{g_{1:N}}{g_{1:N}} with these ordered so that \mjeqn{g_i<g_j}{g_i<g_j} if and only if \mjeqn{i < j}{i<j},
+To estimate the function \mjeqn{f(x)}{f(x)} we specify a set of \mjeqn{N}{N} grid points, \mjeqn{g_{1:N}}{g_{1:N}} with these ordered so that \mjeqn{g_i < g_j}{g_i < g_j} if and only if \mjeqn{i < j}{i < j},
 and allow the slope of \mjeqn{f(x)}{f(x)} to only change at these grid points. We then estimate the number of changes, the location of the changes, and hence the resulting
 function \mjeqn{f(x)}{f(x)} by minimising a penalised weighted least squares criteria. This criteria includes a term which measures fit to the data, which is calculated as the sum of the
 square residuals of the fitted function, scaled by the variance of the noise. The penalty is proportional to the number of changes.
@@ -53,10 +53,10 @@ as the values that solve the following minimisation problem
 where \mjeqn{\sigma^2_1,\ldots,\sigma^2_n}{sigma^2_1,...,sigma^2_n} are the variances of the noise \mjeqn{\epsilon_i}{\epsilon_i} for \mjeqn{i=1,\ldots,n}{i=1,...,n}, and \mjeqn{\beta}{beta} is the
 penalty for adding a changepoint. The sum in this expression is the weighted residual sum of squares, and the \mjeqn{K\beta}{K*beta} term is the penalty for having \mjeqn{K}{K} changes. 
 
-If we know of have good estimates of the residual variances, and the noise is (close to) independent over time than an appropriate choice for the penalty is
+If we know of have good estimates of the residual variances, and the noise is (close to) independent over time then an appropriate choice for the penalty is
 \mjeqn{\beta=2 \log n}{beta=2log(n)}, and this is the default for CPOP. However in many applications these assumptions will not hold and it is advised to look at segmentations for
 different value of \mjeqn{\beta}{beta} -- this is possible
-using CPOP with the CROPS algorithm. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
+using CPOP with the CROPS algorithm \code{\link{cpop.crops}}. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
 and \mjeqn{\beta}{beta}: e.g. if we double the variances and half the value of \mjeqn{\beta}{beta} we will obtain the same estimates for the number and location of the changes and the
 underlying function.
 }
@@ -64,29 +64,44 @@ underlying function.
 Algorithm for finding the best segmentation of data for a change-in-slope model.
 }
 \examples{
-
 library(cpop)
-# generate some test data
-set.seed(0)
-x <- seq(0,1,0.01)
-n <- length(x)
-sigma <- rep(0.1,n)
-mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
-y <- rnorm(n,mu,sigma)
 
-# use the locations in x
-res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
-plot(res)
-
-# without locations (note explicit paramater names)
-res <- cpop(y,beta=2*log(length(y)),sd=sigma)
-plot(res)
-
-# stretch the end of the data
-x[75:101] <- x[75:101] + seq(from=0,by=0.2,length.out=27)
-res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
-plot(res)
+# simulate data with change in gradient
+set.seed(1)
+x <- (1:50/5)^2
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+# analyse using cpop
+res <- cpop(y,x)
+p <- plot(res)
+print(p)
  
+# generate the "true" mean
+mu <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=0)
+# add the true mean to the plot
+library(pacman)
+p_load(ggplot2)
+p <- p + geom_line(aes(y = mu), color = "blue", linetype = "dotted")
+print(p)
+
+# heterogeneous data
+set.seed(1)
+sigma <- (1:50)/25
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=sigma)
+
+# analysis assuming constant noise standard deviation
+res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
+p <- plot(res)
+print(p)
+
+# analysis assuming constant noise standard deviation
+res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
+p <- plot(res)
+print(p)
+
+# add the true mean to the plot
+p <- p + geom_line(aes(y = mu), color = "blue", linetype = "dotted")
+print(p)
+
 }
 \references{
 \insertRef{doi:10.1080/10618600.2018.1512868}{cpop}
