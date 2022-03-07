@@ -44,23 +44,42 @@ setMethod("cost",signature=list("cpop.class"),
 #'
 #' @description Generates simulated data for use with \code{\link{cpop}}.
 #' 
-#' @param x A numeric vector of containing the locations of the data.
+#' @param x A numeric vector containing the locations of the data.
 #' @param changepoints A numeric vector of changepoint locations.
 #' @param change.slope A numeric vector indicating the change in slope at each changepoint. The initial slope is assumed to be 0.
-#' @param sigma The residual standard deviation. Can be a single numerical value or a vector of values for the case of varying residual standard deviation.Default value is 1.
+#' @param sigma The residual standard deviation. Can be a single numerical value or a vector of values for the case of varying residual standard deviation. Default value is 1.
 #' @return A vector of simulated y values.
 #'
 #' @examples
 #' library(cpop)
+#' library(pacman)
+#' p_load(ggplot2)
+#' 
+#' # simulate changepoints with constsant sigma
 #' set.seed(1)
-#' changepoints=c(0,25,50,100)
-#' change.slope=c(0.2,-0.3,0.2,-0.1)
-#' x=1:200
-#' sig=1+x/200
-#' y<-simulate(x,changepoints,change.slope,sig)
-#' res<-cpop(y,x,beta=2*log(length(x)),sd=sig)
-#' summary(res)
-#' plot(res)
+#' changepoints <- c(0,25,50,100)
+#' change.slope <- c(0.2,-0.3,0.2,-0.1)
+#' x <- 1:200
+#' sig <- 0.2
+#' y <- simulate(x,changepoints,change.slope,sig)
+#' df <- data.frame("x"=x,"y"=y)
+#' p <- ggplot(data=df,aes(x=x,y=y))
+#' p <- p + geom_point()
+#' p <- p + geom_vline(xintercept=changepoints,
+#'                     color="red",
+#'                     linetype="dashed")
+#' print(p)
+#' 
+#' # simulate changepoints with varying sigma
+#' sig <- 0.2 + x/200
+#' y <- simulate(x,changepoints,change.slope,sig)
+#' df$y <- y
+#' p <- ggplot(data=df,aes(x=x,y=y))
+#' p <- p + geom_point()
+#' p <- p + geom_vline(xintercept=changepoints,
+#'                     color="red",
+#'                     linetype="dashed")
+#' print(p)
 #'
 #' @export
 simulate<-function(x,changepoints,change.slope,sigma=1)

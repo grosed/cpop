@@ -31,7 +31,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #' @aliases crops.cpop,cpop.crops.class-method
 #'
 #' @examples
-#'
+#' \donttest{
 #' # generate some data
 #' set.seed(0)
 #' x <- seq(0,1,0.01)
@@ -48,6 +48,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' # show the segmentations
 #  segmentations(res)
+#' }
 #'
 #' @references \insertRef{crops-article}{crops}
 #' @references \insertRef{crops-package}{cpop}
@@ -92,6 +93,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #' @aliases cpop.crops.models,cpop.crops.class-method
 #'
 #' @examples
+#' \donttest{
 #' set.seed(1)
 #' n <- 500
 #' x <- 1:n
@@ -105,6 +107,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #' {
 #'   plot(m)
 #' }
+#'}
 #'
 #' @seealso \code{\link{cpop.crops}},\code{\link[crops]{crops}}
 #'

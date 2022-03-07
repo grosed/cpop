@@ -43,7 +43,7 @@ For details of the \code{crops} function see the \pkg{crops package}. Methods fr
 \code{\link[crops]{segmentations}} and \code{\link[crops]{subset}}.
 }
 \examples{
-
+\donttest{
 # generate some data
 set.seed(0)
 x <- seq(0,1,0.01)
@@ -59,6 +59,7 @@ summary(res)
 plot(res) 
 
 # show the segmentations
+}
 
 }
 \references{

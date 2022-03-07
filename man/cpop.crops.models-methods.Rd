@@ -17,6 +17,7 @@ A list of S4 \code{cpop.class} objects corresponding to the beta values consider
 Obtains a list of models corresponding to each of the beta (penalty) values considered during a \code{cpop.crops} analysis.
 }
 \examples{
+\donttest{
 set.seed(1)
 n <- 500
 x <- 1:n
@@ -29,6 +30,7 @@ models <- cpop.crops.models(res.crops)
 for(m in models)
 {
   plot(m)
+}
 }
 
 }
