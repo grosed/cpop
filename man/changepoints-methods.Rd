@@ -16,6 +16,7 @@ Creates a data frame containing the locations of the changepoints in terms of th
 }
 \examples{
 library(cpop)
+
 # generate some test data
 set.seed(0)
 x <- seq(0,1,0.01)

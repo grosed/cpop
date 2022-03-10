@@ -32,6 +32,8 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' @examples
 #' \donttest{
+#' library(cpop)
+#'
 #' # generate some data
 #' set.seed(0)
 #' x <- seq(0,1,0.01)
@@ -94,6 +96,8 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #'
 #' @examples
 #' \donttest{
+#' library(cpop)
+#'
 #' set.seed(1)
 #' n <- 500
 #' x <- 1:n

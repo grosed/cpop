@@ -5,7 +5,7 @@
 \alias{estimate,cpop.class-method}
 \title{A function for estimating the fit of a cpop model}
 \usage{
-estimate(object, x, ...)
+estimate(object, x = object@x, ...)
 }
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
@@ -14,6 +14,31 @@ estimate(object, x, ...)
 
 \item{...}{Additional arguments.}
 }
+\value{
+A data frame with two columns containing the locations x and the corresponding estimates y_hat.
+}
 \description{
-Estimates the fit of a cpop model at the specified locations.
+Estimates the fit of a cpop model at the specified locations. If no locations are specified it evaluates the estimates
+at the locations specified when calling \code{\link{cpop}}.
+}
+\examples{
+library(cpop)
+
+# simulate data with change in gradient
+set.seed(1)
+x <- (1:50/5)^2
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+
+# determine changepoints
+res <- cpop(y,x,beta=2*log(length(y)))
+
+# estimate fit at points used in call to cpop
+estimate(res)
+
+# estimate fit at specified locations
+estimate(res,seq(0,100,10))
+
+#extrapolate fit
+estimate(res,seq(-20,140,20))
+
 }

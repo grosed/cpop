@@ -19,16 +19,19 @@ Data of power spectra of velocity as a function of wavenumber obtained from clim
 library(cpop)
 library(pacman)
 p_load(tidyr,ggplot2,dplyr)
+
 data(wavenumber_spectra)
+
 # take logs of variables
 data <-  wavenumber_spectra \%>\%  mutate_all(log) \%>\% rename_all( ~ paste0("log_", .x))
 head(data)
-# reproduce figure 4 in Richards and Whitt 
+
+# reproduce figure 4 in "The Impact of Climate Change on Ocean Submesoscale 
+# Activity" - Richards and Whitt (2021)
 data \%>\%
 gather(variable,log_power_spectra,-log_wavenumber) \%>\%
 ggplot(aes(x=log_wavenumber, y=log_power_spectra, colour=variable)) +
-geom_line() + 
-theme_bw()
+geom_line() + theme_bw()
 
 }
 \references{

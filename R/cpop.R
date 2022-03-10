@@ -20,9 +20,26 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 #'
 #' @name cost
 #'
-#' @description Calculates the cost of a model fitted by cpop using the residual sum of squares and the penalty values.
+#' @description Calculates the penalised cost of a model fitted by cpop using the residual sum of squares and the penalty values.
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
+#'
+#' @return Numerical value of the penalised cost associated with the segmentations determined by using \code{\link{cpop}}   
+#'
+
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # calculate the penalised cost 
+#' cost(res)
 #'
 #' @rdname cost-methods
 #'
@@ -106,6 +123,23 @@ simulate<-function(x,changepoints,change.slope,sigma=1)
 #' @param x An instance of an cpop S4 class produced by \code{\link{cpop}}.
 #' 
 #' @return A ggplot object.
+
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # analyse data
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # generate plot object
+#' p <- plot(res)
+#'
+#' # visualise
+#' print(p)
 #'
 #' @rdname plot-methods
 #'
@@ -155,6 +189,19 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 #'
 #' @aliases summary,cpop.class-method
 #'
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # display a summary of the results
+#' summary(res)
 #' @export
 setMethod("summary",signature=list("cpop.class"),function(object)
 {
@@ -205,8 +252,21 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #'
 #' @rdname show-methods
 #'
-#' @aliases show,cpop.class-method
+#' @aliases show,cpop.class-method 
+#'
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
 #' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # display a summary of the results using show
+#' show(res)
 #'
 #' @export
 setGeneric("show",function(object) {standardGeneric("show")})
@@ -229,12 +289,26 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #'
 #' @return A data frame containing the endpoint coordinates for each line segment fitted between
 #' the detected changepoints. The data frame also contains the gradient and intercept values
-#' for each segment and the corresponding residual sum of squares (RSS).
+#' for each segment and the corresponding residual sum of squares (RSS). 
 #'
 #' @rdname fitted-methods
 #'
 #' @aliases fitted,cpop.class-method
 #'
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # calculate segments
+#' fitted(res)
+
 #' @export
 setGeneric("fitted",function(object) {standardGeneric("fitted")})
 setMethod("fitted",signature=list("cpop.class"),
@@ -276,6 +350,7 @@ setMethod("fitted",signature=list("cpop.class"),
 #'
 #' @examples
 #' library(cpop)
+#'
 #' # generate some test data
 #' set.seed(0)
 #' x <- seq(0,1,0.01)
@@ -338,7 +413,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' where \mjeqn{\sigma^2_1,\ldots,\sigma^2_n}{sigma^2_1,...,sigma^2_n} are the variances of the noise \mjeqn{\epsilon_i}{\epsilon_i} for \mjeqn{i=1,\ldots,n}{i=1,...,n}, and \mjeqn{\beta}{beta} is the
 #' penalty for adding a changepoint. The sum in this expression is the weighted residual sum of squares, and the \mjeqn{K\beta}{K*beta} term is the penalty for having \mjeqn{K}{K} changes. 
 #'
-#' If we know of have good estimates of the residual variances, and the noise is (close to) independent over time then an appropriate choice for the penalty is
+#' If we know, or have a good estimate of, the residual variances, and the noise is (close to) independent over time then an appropriate choice for the penalty is
 #' \mjeqn{\beta=2 \log n}{beta=2log(n)}, and this is the default for CPOP. However in many applications these assumptions will not hold and it is advised to look at segmentations for
 #' different value of \mjeqn{\beta}{beta} -- this is possible
 #' using CPOP with the CROPS algorithm \code{\link{cpop.crops}}. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
@@ -376,10 +451,10 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
 #' p <- plot(res)
 #' print(p)
-#' 
-#' # analysis assuming constant noise standard deviation
-#' res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
-#' p <- plot(res)
+#'
+#' # analysis with the true noise standard deviation
+#' res.true <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+#' p <- plot(res.true)
 #' print(p)
 #' 
 #' # add the true mean to the plot
@@ -440,20 +515,43 @@ parameters<-function(object)
 #'
 #' @name estimate
 #'
-#' @description Estimates the fit of a cpop model at the specified locations.
+#' @description Estimates the fit of a cpop model at the specified locations. If no locations are specified it evaluates the estimates
+#' at the locations specified when calling \code{\link{cpop}}. 
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #' @param x Locations at which the fit is to be estimated. Default value is the x locations at which the cpop object was defined.
 #' @param ... Additional arguments.
 #'
+#' @return A data frame with two columns containing the locations x and the corresponding estimates y_hat. 
+#'
 #' @rdname estimate-methods
 #'
 #' @aliases estimate,cpop.class-method
 #'
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # estimate fit at points used in call to cpop
+#' estimate(res)
+#'
+#' # estimate fit at specified locations
+#' estimate(res,seq(0,100,10))
+#' 
+#' #extrapolate fit
+#' estimate(res,seq(-20,140,20))
+#' 
 #' @export
-setGeneric("estimate",function(object,x,...) {standardGeneric("estimate")})
+setGeneric("estimate",function(object,x=object@x,...) {standardGeneric("estimate")})
 setMethod("estimate",signature=list("cpop.class"),
-          function(object,x=object@x)
+          function(object,x)
           {
              return(data.frame("x"=x,"y_hat"=design(object,x)%*%parameters(object)))
           })	      
@@ -467,7 +565,23 @@ setMethod("estimate",signature=list("cpop.class"),
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #'
-#' @rdname residuals-methods
+#' @return A single column matrix containing the residuals. 
+#'
+#' @rdname residuals-methods 
+#'
+#' @examples
+#' library(cpop)
+#'
+#' # simulate data with change in gradient
+#' set.seed(1)
+#' x <- (1:50/5)^2
+#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+#' 
+#' # determine changepoints
+#' res <- cpop(y,x,beta=2*log(length(y)))
+#'
+#' # calculate the residuals
+#' residuals(res)
 #'
 #' @aliases residuals,cpop.class-method
 #'

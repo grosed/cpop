@@ -10,6 +10,24 @@
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 }
+\value{
+A single column matrix containing the residuals.
+}
 \description{
 Extracts residuals from a cpop model.
+}
+\examples{
+library(cpop)
+
+# simulate data with change in gradient
+set.seed(1)
+x <- (1:50/5)^2
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+
+# determine changepoints
+res <- cpop(y,x,beta=2*log(length(y)))
+
+# calculate the residuals
+residuals(res)
+
 }

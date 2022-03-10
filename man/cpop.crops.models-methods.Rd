@@ -18,6 +18,8 @@ Obtains a list of models corresponding to each of the beta (penalty) values cons
 }
 \examples{
 \donttest{
+library(cpop)
+
 set.seed(1)
 n <- 500
 x <- 1:n

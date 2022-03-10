@@ -44,6 +44,8 @@ For details of the \code{crops} function see the \pkg{crops package}. Methods fr
 }
 \examples{
 \donttest{
+library(cpop)
+
 # generate some data
 set.seed(0)
 x <- seq(0,1,0.01)

@@ -53,7 +53,7 @@ as the values that solve the following minimisation problem
 where \mjeqn{\sigma^2_1,\ldots,\sigma^2_n}{sigma^2_1,...,sigma^2_n} are the variances of the noise \mjeqn{\epsilon_i}{\epsilon_i} for \mjeqn{i=1,\ldots,n}{i=1,...,n}, and \mjeqn{\beta}{beta} is the
 penalty for adding a changepoint. The sum in this expression is the weighted residual sum of squares, and the \mjeqn{K\beta}{K*beta} term is the penalty for having \mjeqn{K}{K} changes. 
 
-If we know of have good estimates of the residual variances, and the noise is (close to) independent over time then an appropriate choice for the penalty is
+If we know, or have a good estimate of, the residual variances, and the noise is (close to) independent over time then an appropriate choice for the penalty is
 \mjeqn{\beta=2 \log n}{beta=2log(n)}, and this is the default for CPOP. However in many applications these assumptions will not hold and it is advised to look at segmentations for
 different value of \mjeqn{\beta}{beta} -- this is possible
 using CPOP with the CROPS algorithm \code{\link{cpop.crops}}. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
@@ -93,9 +93,9 @@ res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
 p <- plot(res)
 print(p)
 
-# analysis assuming constant noise standard deviation
-res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
-p <- plot(res)
+# analysis with the true noise standard deviation
+res.true <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+p <- plot(res.true)
 print(p)
 
 # add the true mean to the plot

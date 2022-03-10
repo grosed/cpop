@@ -14,3 +14,18 @@ show(object)
 \description{
 Displays an S4 object produced by \code{\link{cpop}}.
 }
+\examples{
+library(cpop)
+
+# simulate data with change in gradient
+set.seed(1)
+x <- (1:50/5)^2
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+
+# determine changepoints
+res <- cpop(y,x,beta=2*log(length(y)))
+
+# display a summary of the results using show
+show(res)
+
+}

@@ -17,3 +17,21 @@ A ggplot object.
 \description{
 Plot methods for S4 objects returned by \code{\link{cpop}}.
 }
+\examples{
+library(cpop)
+
+# simulate data with change in gradient
+set.seed(1)
+x <- (1:50/5)^2
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+
+# analyse data
+res <- cpop(y,x,beta=2*log(length(y)))
+
+# generate plot object
+p <- plot(res)
+
+# visualise
+print(p)
+
+}
