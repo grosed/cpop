@@ -10,9 +10,9 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' @name cpop.crops
 #'
-#' @description Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
-#' For details of the \code{crops} function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
-#' \code{\link[crops]{segmentations}} and \code{\link[crops]{subset}}.    
+#' @description Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2017) to find all of the optimal segmentations for multiple penalty values over a continuous range.
+#' For details of the CROPS method see the \pkg{\link[crops]{crops}} package. To obtain details for each segmentation determined by \code{\link[cpop]{cpop.crops}} use the 
+#' \code{\link[crops]{segmentations}} method (see example below).    
 #'
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
@@ -21,8 +21,8 @@ cpop.crops.class<-function(crops.result,y,x)
 #' @param beta_max Maximum value of the penalty range to be searched. Default is \code{2.5*log(length(y))} 
 #' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.
 #' @param minseglen The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.
-#' @param prune.approx Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may
-#' occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.
+#' @param prune.approx Only relevant if a minimum segment length is set. If TRUE, cpop will use an approximate pruning algorithm that will speed up computation but may
+#' occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used. 
 #'
 #' @return An instance of an S4 class of type cpop.crops.class which extends the crops.class in \pkg{crops}.
 #'
@@ -49,10 +49,10 @@ cpop.crops.class<-function(crops.result,y,x)
 #' plot(res) 
 #'
 #' # show the segmentations
-#  segmentations(res)
+#'  segmentations(res)
 #' }
 #'
-#' @references \insertRef{crops-article}{crops}
+#' @references \insertRef{crops-article}{cpop}
 #' @references \insertRef{crops-package}{cpop}
 #' @export
 cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y)),
@@ -115,7 +115,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #'
 #' @seealso \code{\link{cpop.crops}},\code{\link[crops]{crops}}
 #'
-#' @references \insertRef{crops-article}{crops}
+#' @references \insertRef{crops-article}{cpop}
 #' @references \insertRef{crops-package}{cpop}
 #' @export
 setGeneric("cpop.crops.models",function(object) {standardGeneric("cpop.crops.models")})

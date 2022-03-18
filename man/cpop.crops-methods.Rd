@@ -31,16 +31,16 @@ cpop.crops(
 
 \item{minseglen}{The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.}
 
-\item{prune.approx}{Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may
+\item{prune.approx}{Only relevant if a minimum segment length is set. If TRUE, cpop will use an approximate pruning algorithm that will speed up computation but may
 occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.}
 }
 \value{
 An instance of an S4 class of type cpop.crops.class which extends the crops.class in \pkg{crops}.
 }
 \description{
-Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2014) to find all of the optimal segmentations for multiple penalty values over a continuous range.
-For details of the \code{crops} function see the \pkg{crops package}. Methods from the \pkg{crops} package that are applicable to crops are
-\code{\link[crops]{segmentations}} and \code{\link[crops]{subset}}.
+Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2017) to find all of the optimal segmentations for multiple penalty values over a continuous range.
+For details of the CROPS method see the \pkg{\link[crops]{crops}} package. To obtain details for each segmentation determined by \code{\link[cpop]{cpop.crops}} use the 
+\code{\link[crops]{segmentations}} method (see example below).
 }
 \examples{
 \donttest{
@@ -61,11 +61,12 @@ summary(res)
 plot(res) 
 
 # show the segmentations
+ segmentations(res)
 }
 
 }
 \references{
-\insertRef{crops-article}{crops}
+\insertRef{crops-article}{cpop}
 
 \insertRef{crops-package}{cpop}
 }

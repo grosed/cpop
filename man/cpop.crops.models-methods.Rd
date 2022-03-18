@@ -37,7 +37,7 @@ for(m in models)
 
 }
 \references{
-\insertRef{crops-article}{crops}
+\insertRef{crops-article}{cpop}
 
 \insertRef{crops-package}{cpop}
 }
