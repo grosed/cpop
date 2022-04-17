@@ -4,7 +4,7 @@
 \alias{simulate}
 \title{A function for generating simulated data}
 \usage{
-simulate(x, changepoints, change.slope, sigma = 1)
+simulate(x, changepoints, change.slope, sd = 1)
 }
 \arguments{
 \item{x}{A numeric vector containing the locations of the data.}
@@ -13,7 +13,7 @@ simulate(x, changepoints, change.slope, sigma = 1)
 
 \item{change.slope}{A numeric vector indicating the change in slope at each changepoint. The initial slope is assumed to be 0.}
 
-\item{sigma}{The residual standard deviation. Can be a single numerical value or a vector of values for the case of varying residual standard deviation. Default value is 1.}
+\item{sd}{The residual standard deviation. Can be a single numerical value or a vector of values for the case of varying residual standard deviation. Default value is 1.}
 }
 \value{
 A vector of simulated y values.
@@ -26,13 +26,13 @@ library(cpop)
 library(pacman)
 p_load(ggplot2)
 
-# simulate changepoints with constsant sigma
+# simulate changepoints with constant sd
 set.seed(1)
 changepoints <- c(0,25,50,100)
 change.slope <- c(0.2,-0.3,0.2,-0.1)
 x <- 1:200
-sig <- 0.2
-y <- simulate(x,changepoints,change.slope,sig)
+sd <- 0.2
+y <- simulate(x,changepoints,change.slope,sd)
 df <- data.frame("x"=x,"y"=y)
 p <- ggplot(data=df,aes(x=x,y=y))
 p <- p + geom_point()
@@ -41,9 +41,9 @@ p <- p + geom_vline(xintercept=changepoints,
                     linetype="dashed")
 print(p)
 
-# simulate changepoints with varying sigma
-sig <- 0.2 + x/200
-y <- simulate(x,changepoints,change.slope,sig)
+# simulate changepoints with varying sd
+sd <- 0.2 + x/200
+y <- simulate(x,changepoints,change.slope,sd)
 df$y <- y
 p <- ggplot(data=df,aes(x=x,y=y))
 p <- p + geom_point()

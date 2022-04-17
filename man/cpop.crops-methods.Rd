@@ -50,11 +50,11 @@ library(cpop)
 set.seed(0)
 x <- seq(0,1,0.01)
 n <- length(x)
-sigma <- rep(0.1,n)
+sd <- rep(0.1,n)
 mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
-y <- rnorm(n,mu,sigma)
+y <- rnorm(n,mu,sd)
 # calculate the changepoint locations and cost over a range of penalty values
-res <- cpop.crops(y,x,sd=sigma,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
+res <- cpop.crops(y,x,sd=sd,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
 summary(res)
 
 # plot the results

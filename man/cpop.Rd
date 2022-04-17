@@ -69,14 +69,14 @@ library(cpop)
 # simulate data with change in gradient
 set.seed(1)
 x <- (1:50/5)^2
-y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=1)
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 # analyse using cpop
 res <- cpop(y,x)
 p <- plot(res)
 print(p)
  
 # generate the "true" mean
-mu <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=0)
+mu <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=0)
 # add the true mean to the plot
 library(pacman)
 p_load(ggplot2)
@@ -85,16 +85,16 @@ print(p)
 
 # heterogeneous data
 set.seed(1)
-sigma <- (1:50)/25
-y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sigma=sigma)
+sd <- (1:50)/25
+y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=sd)
 
 # analysis assuming constant noise standard deviation
-res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sigma^2)))
+res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sd^2)))
 p <- plot(res)
 print(p)
 
 # analysis with the true noise standard deviation
-res.true <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+res.true <- cpop(y,x,beta=2*log(length(y)),sd=sd)
 p <- plot(res.true)
 print(p)
 

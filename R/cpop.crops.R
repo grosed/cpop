@@ -38,11 +38,11 @@ cpop.crops.class<-function(crops.result,y,x)
 #' set.seed(0)
 #' x <- seq(0,1,0.01)
 #' n <- length(x)
-#' sigma <- rep(0.1,n)
+#' sd <- rep(0.1,n)
 #' mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
-#' y <- rnorm(n,mu,sigma)
+#' y <- rnorm(n,mu,sd)
 #' # calculate the changepoint locations and cost over a range of penalty values
-#' res <- cpop.crops(y,x,sd=sigma,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
+#' res <- cpop.crops(y,x,sd=sd,beta_min=0.4*log(length(y)),beta_max=2.5*log(length(y)))
 #' summary(res)
 #'
 #' # plot the results
@@ -102,7 +102,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #' n <- 500
 #' x <- 1:n
 #' m <- 10
-#' mu <- simulate(x,changepoints=(n/(m+1))*0:m,change.slope=c(0.1,0.2*(-1)^(1:m)),sigma=0)
+#' mu <- simulate(x,changepoints=(n/(m+1))*0:m,change.slope=c(0.1,0.2*(-1)^(1:m)),sd=0)
 #' epsilon <- rnorm(n+2)
 #' y <- mu+(epsilon[1:n]+epsilon[2:(n+1)]+epsilon[3:(n+2)])/sqrt(3)
 #' res.crops <- cpop.crops(y,x,beta_min=0.5*log(length(y)),beta_max=40*log(length(y)))

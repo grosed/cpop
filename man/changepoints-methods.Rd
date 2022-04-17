@@ -21,12 +21,12 @@ library(cpop)
 set.seed(0)
 x <- seq(0,1,0.01)
 n <- length(x)
-sigma <- rep(0.1,n)
+sd <- rep(0.1,n)
 mu <- c(2*x[1:floor(n/2)],2 - 2*x[(floor(n/2)+1):n])
-y <- rnorm(n,mu,sigma)
+y <- rnorm(n,mu,sd)
 
 # use the locations in x
-res <- cpop(y,x,beta=2*log(length(y)),sd=sigma)
+res <- cpop(y,x,beta=2*log(length(y)),sd=sd)
 changepoints(res)
 
 }
