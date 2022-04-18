@@ -386,7 +386,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
 #' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
-#' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).
+#' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting). Default value is \code{2*log(length(y))}.
 #' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.
 #' @param minseglen The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.
 #' @param prune.approx Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may

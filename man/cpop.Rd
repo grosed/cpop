@@ -21,7 +21,7 @@ cpop(
 
 \item{grid}{An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.}
 
-\item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting).}
+\item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting). Default value is \code{2*log(length(y))}.}
 
 \item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
 
