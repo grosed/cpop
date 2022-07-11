@@ -19,5 +19,6 @@ exportMethods(residuals)
 exportMethods(cpop.crops.models)
 importFrom(Rcpp, evalCpp)
 importFrom(Rdpack,reprompt)
+importFrom(pracma,pinv)
 
 

@@ -507,7 +507,7 @@ parameters<-function(object)
   W<-diag(object@sd^-2)
   X<-design(object)
   XTX<-t(X)%*%W%*%X
-  pars<-as.vector(solve(XTX)%*%t(X)%*%W%*%object@y)
+  pars<-as.vector(pinv(XTX)%*%t(X)%*%W%*%object@y)
   return(pars)
 }
 
