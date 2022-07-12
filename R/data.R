@@ -1,6 +1,7 @@
 #' Wavenumber Power Spectra data.
 #'
-#' Data of power spectra of velocity as a function of wavenumber obtained from climate models of the Atlantic Ocean at two depths and for two different months. See \insertRef{richards-whitt}{cpop}  
+#' Data of power spectra of velocity as a function of wavenumber obtained from climate models of the Atlantic Ocean for two different months and
+#' two climate scenarios: a present-day one (run 2000) and a future scenario (run 2100). See \insertRef{richards-whitt}{cpop}  
 #' 
 #' @name wavenumber_spectra
 #' 
@@ -13,7 +14,7 @@
 #' @rdname wavenumber-spectra-data
 #'
 #' @format A dataframe with 5 columns and 247 rows. The first column is wavenumber (cycles per metre). 
-#' The other columns are the power spectra values for different months (Feb depth 100m, Aug depth 100m, Feb depth 50m, and  Aug depth 50m).
+#' The other columns are the power spectra values for different months (Feb run 2000, Aug run 2000, Feb run 2100, Aug run 2100).
 #' The original data is documented in \insertRef{richards-whitt-data}{cpop}
 #' 
 #' @examples
@@ -38,6 +39,10 @@
 #' @references \insertRef{richards-whitt-data}{cpop}
 #'
 NULL
+
+
+
+
 
 
 
