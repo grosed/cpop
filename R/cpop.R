@@ -33,7 +33,7 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -57,7 +57,7 @@ setMethod("cost",signature=list("cpop.class"),
 
 #' A function for generating simulated data
 #'
-#' @name simulate
+#' @name simchangeslope
 #'
 #' @description Generates simulated data for use with \code{\link{cpop}}.
 #' 
@@ -78,7 +78,7 @@ setMethod("cost",signature=list("cpop.class"),
 #' change.slope <- c(0.2,-0.3,0.2,-0.1)
 #' x <- 1:200
 #' sd <- 0.2
-#' y <- simulate(x,changepoints,change.slope,sd)
+#' y <- simchangeslope(x,changepoints,change.slope,sd)
 #' df <- data.frame("x"=x,"y"=y)
 #' p <- ggplot(data=df,aes(x=x,y=y))
 #' p <- p + geom_point()
@@ -89,7 +89,7 @@ setMethod("cost",signature=list("cpop.class"),
 #' 
 #' # simulate changepoints with varying sd
 #' sd <- 0.2 + x/200
-#' y <- simulate(x,changepoints,change.slope,sd)
+#' y <- simchangeslope(x,changepoints,change.slope,sd)
 #' df$y <- y
 #' p <- ggplot(data=df,aes(x=x,y=y))
 #' p <- p + geom_point()
@@ -99,7 +99,7 @@ setMethod("cost",signature=list("cpop.class"),
 #' print(p)
 #'
 #' @export
-simulate<-function(x,changepoints,change.slope,sd=1)
+simchangeslope<-function(x,changepoints,change.slope,sd=1)
 {
   K=length(changepoints)
   mu=rep(0,length(x))
@@ -130,7 +130,7 @@ simulate<-function(x,changepoints,change.slope,sd=1)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # analyse data
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -195,7 +195,7 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -260,7 +260,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -301,7 +301,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -428,14 +428,14 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' # analyse using cpop
 #' res <- cpop(y,x)
 #' p <- plot(res)
 #' print(p)
 #'  
 #' # generate the "true" mean
-#' mu <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=0)
+#' mu <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=0)
 #' # add the true mean to the plot
 #' library(pacman)
 #' p_load(ggplot2)
@@ -445,7 +445,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' # heterogeneous data
 #' set.seed(1)
 #' sd <- (1:50)/25
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=sd)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=sd)
 #' 
 #' # analysis assuming constant noise standard deviation
 #' res <- cpop(y,x,beta=2*log(length(y)),sd=sqrt(mean(sd^2)))
@@ -534,7 +534,7 @@ parameters<-function(object)
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))
@@ -575,7 +575,7 @@ setMethod("estimate",signature=list("cpop.class"),
 #' # simulate data with change in gradient
 #' set.seed(1)
 #' x <- (1:50/5)^2
-#' y <- simulate(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
+#' y <- simchangeslope(x,changepoints=c(10,50),change.slope=c(0.25,-0.25),sd=1)
 #' 
 #' # determine changepoints
 #' res <- cpop(y,x,beta=2*log(length(y)))

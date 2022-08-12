@@ -525,7 +525,7 @@ test_that("test 8 - test for the effects of setting minseglen greater than short
    changepoints=c(0,25,50,100)
    change.slope=c(0.2,-0.3,0.2,-0.1)
    x=1:200
-   y<-simulate(x,changepoints,change.slope,1)
+   y<-simchangeslope(x,changepoints,change.slope,1)
    out=CPOP.uneven.var(y,x,beta=2*log(length(x)),sigsquared=4)
    out$changepoints
    out$min.cost
@@ -549,7 +549,7 @@ test_that("test 9 - test use of non default value for grid",
    x<-1:200
    changepoints<-c(0,25,50,100)
    change.slope<-c(0.2,-0.3,0.2,-0.1)
-   y<-simulate(x,changepoints,change.slope,1)
+   y<-simchangeslope(x,changepoints,change.slope,1)
    cpop.res<-cpop(y,x,sd=2)
    cpop.grid.res<-cpop(y,x,grid=c(0.5,1.5,99.0),sd=2)
    expect_false(isTRUE(all.equal(cost(cpop.res),cost(cpop.grid.res))))
