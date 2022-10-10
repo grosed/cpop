@@ -46,7 +46,7 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 #' @aliases cost,cpop.class-method
 #'
 #' @export
-setGeneric("cost",function(object) {standardGeneric("cost")})
+if(!isGeneric("cost")) {setGeneric("cost",function(object) {standardGeneric("cost")})}
 setMethod("cost",signature=list("cpop.class"),
           function(object)
           {
@@ -269,7 +269,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #' show(res)
 #'
 #' @export
-setGeneric("show",function(object) {standardGeneric("show")})
+if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
 setMethod("show",signature=list("cpop.class"),function(object)
 {
     summary(object)
@@ -310,7 +310,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #' fitted(res)
 
 #' @export
-setGeneric("fitted",function(object) {standardGeneric("fitted")})
+# if(!isGeneric("fitted")) {setGeneric("fitted",function(object) {standardGeneric("fitted")})}
 setMethod("fitted",signature=list("cpop.class"),
           function(object)
           {
@@ -549,7 +549,7 @@ parameters<-function(object)
 #' estimate(res,seq(-20,140,20))
 #' 
 #' @export
-setGeneric("estimate",function(object,x=object@x,...) {standardGeneric("estimate")})
+if(!isGeneric("estimate")) {setGeneric("estimate",function(object,x=object@x,...) {standardGeneric("estimate")})}
 setMethod("estimate",signature=list("cpop.class"),
           function(object,x)
           {

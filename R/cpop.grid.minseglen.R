@@ -304,10 +304,6 @@ peltprune=function(x,beta){
 ##################coverts null to na#######################################################################
 ###########################################################################################################
 
-null2na<-function(vec){
-  if(is.null(vec)){vec<-NA}
-  return(vec)
-}
 
 out<-CPOP.grid.minseg(y,x,grid,minseg,beta,sigsquared,FALSE,FALSE)
 out$changepoints<-c(x[1],out$changepoints)

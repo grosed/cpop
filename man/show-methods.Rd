@@ -5,9 +5,6 @@
 \alias{show}
 \alias{show,cpop.class-method}
 \title{Displays an S4 object produced by cpop.}
-\usage{
-show(object)
-}
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 }

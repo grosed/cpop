@@ -6,7 +6,7 @@
 \alias{fitted,cpop.class-method}
 \title{Extract Model Fitted Values}
 \usage{
-fitted(object)
+\S4method{fitted}{cpop.class}(object)
 }
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
