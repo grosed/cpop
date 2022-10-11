@@ -1,8 +1,8 @@
 Package: cpop
 Type: Package
 Title: Detection of Multiple Changes in Slope in Univariate Time-Series 
-Version: 1.0.3
-Date: 2022-08-23
+Version: 1.0.4
+Date: 2022-10-11
 Maintainer: Daniel Grose <dan.grose@lancaster.ac.uk>
 Authors@R: c(person("Daniel", "Grose", role = c("aut", "cre"),email = "dan.grose@lancaster.ac.uk"),
              person("Paul", "Fearnhead", role = "aut",email = "p.fearnhead@lancaster.ac.uk"))
