@@ -3,7 +3,7 @@
 ## cpop 1.0.4
 
 - Added NEWS.md
-- Added guards for setting show and fitted methods as generic to preventing masking.
+- Added guards for setting show and fitted methods as generic to preventing masking
 - Removed redundant (non exported) null2na functions
 - Changed name of vignettes from article to cpop
 - Corrected details of reference in DESCRIPTION file
