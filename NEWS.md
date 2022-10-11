@@ -9,6 +9,8 @@
 - Corrected details of reference in DESCRIPTION file
 - Changed titles in documentation to sentence case
 - Improved documentation of cpop method
+- Changed default value of sd in cpop to be data dependent
+- Fixed error in estimate function
 
 ##  cpop 1.0.3 
 
