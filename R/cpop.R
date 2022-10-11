@@ -315,7 +315,7 @@ setMethod("fitted",signature=list("cpop.class"),
           function(object)
           {
 	  x<-sort(unique(c(object@x,object@changepoints)))
-	  y_hat<-estimate(object,x)$y_hat
+	  y_hat<-estimate.util(object,x)$y_hat
 	  cpts<-object@changepoints
 	  y_0<-unlist(Map(function(val) y_hat[which(x==val)],cpts))
   	  df<-data.frame("x0"=cpts[1:(length(cpts)-1)],
@@ -390,7 +390,8 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
 #' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
 #' @param beta A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting). Default value is \code{2*log(length(y))}.
-#' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.
+#' @param sd Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation.
+#' Default value is \code{sd = sqrt(mean(diff(diff(y))^2)/6)}.
 #' @param minseglen The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.
 #' @param prune.approx Only relevant if a minimum segment length is set. If True, cpop will use an approximate pruning algorithm that will speed up computation but may
 #' occasionally lead to a sub-optimal solution in terms of the estimate change point locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.
@@ -467,8 +468,12 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' print(p)
 #'
 #' @export
-cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=1,minseglen=0,prune.approx=FALSE)
+cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=NULL,minseglen=0,prune.approx=FALSE)
 {
+    if(is.null(sd))
+    {
+      sd <- sqrt(mean(diff(diff(y))^2)/6)
+    }
     if(length(sd)!=length(y))
     {
       sd=rep(sd[1],length(y))
@@ -516,6 +521,12 @@ parameters<-function(object)
   return(pars)
 }
 
+estimate.util <- function(object,x)
+{
+    return(data.frame("x"=x,"y_hat"=design(object,x)%*%parameters(object)))
+}
+
+
 #' Estimate the fit of a cpop model
 #'
 #' @name estimate
@@ -558,7 +569,20 @@ if(!isGeneric("estimate")) {setGeneric("estimate",function(object,x=object@x,...
 setMethod("estimate",signature=list("cpop.class"),
           function(object,x)
           {
-             return(data.frame("x"=x,"y_hat"=design(object,x)%*%parameters(object)))
+  	        df<-fitted(object)
+        	nrows <- nrow(df)
+        	df <- rbind(df[1,],df,df[nrows,])
+        	df$x1[1] <- df$x0[1]
+        	df$x0[1] <- -Inf
+        	df$x0[nrows+2] <- df$x1[nrows+2]
+        	df$x1[nrows+2] <- Inf
+        	y_hat <- Map(function(val)
+                     {    
+                        interval <- df[val > df$x0 & val <= df$x1,]
+                        return(val*interval$gradient+interval$intercept)
+                     },
+                     x)
+        	return(data.frame("x"=x,"y_hat"=unlist(y_hat)))
           })	      
 
 

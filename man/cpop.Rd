@@ -9,7 +9,7 @@ cpop(
   x = 1:length(y) - 1,
   grid = x,
   beta = 2 * log(length(y)),
-  sd = 1,
+  sd = NULL,
   minseglen = 0,
   prune.approx = FALSE
 )
@@ -23,7 +23,8 @@ cpop(
 
 \item{beta}{A positive real value for the penalty incurred for adding a changepoint (prevents over-fitting). Default value is \code{2*log(length(y))}.}
 
-\item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
+\item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation.
+Default value is \code{sd = sqrt(mean(diff(diff(y))^2)/6)}.}
 
 \item{minseglen}{The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.}
 

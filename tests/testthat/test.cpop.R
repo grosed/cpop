@@ -379,7 +379,7 @@ test_that("test 2 - test that cpop predicts the correct RSS and changepoints usi
    out=CPOP.uneven.var(y,x,beta=2,sigsquared=1)
    fit=CPOP.fit(y,x,out$changepoints,1)
    RSS<-sum(fit$residuals^2)
-   cpop.res<-cpop(y,x,beta=2)
+   cpop.res<-cpop(y,x,beta=2,sd=1)
    cpop.RSS<-sum(fitted(cpop.res)$RSS)
    expect_equal(cpop.RSS,RSS)
    expect_equal(changepoints(cpop.res)$location,x[out$changepoints[2:24]])
@@ -475,7 +475,7 @@ test_that("test 6 - test default value of sd",
    fit=CPOP.fit(y,x,out$changepoints,1)
    #CHECK
    cost<-sum(fit$residuals^2)+2*log(length(x))*(length(out$changepoints)-2)
-   cpop.res<-cpop(y,x)
+   cpop.res<-cpop(y,x,sd=1)
    expect_equal(cost(cpop.res),cost)
 })
 
