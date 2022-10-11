@@ -2,7 +2,7 @@
 % Please edit documentation in R/cpop.R
 \name{cpop}
 \alias{cpop}
-\title{cpop}
+\title{Find the best segmentation of data for a change-in-slope model}
 \usage{
 cpop(
   y,
@@ -34,6 +34,9 @@ occasionally lead to a sub-optimal solution in terms of the estimate change poin
 An instance of an S4 class of type cpop.class.
 }
 \description{
+The CPOP algorithm fits a change-in-slope model to data.
+}
+\details{
 \loadmathjax{} The CPOP algorithm fits a change-in-slope model to data. It assumes that we have we have data points \mjeqn{(y_1,x_1),\ldots,(y_n,x_n)}{(y_1,x_1),...,(y_n,x_n)}, ordered
 so that \mjeqn{x_1 < x_2 < \cdots < x_n}{x_1 < x_2 < ... < x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
 plus noise where the signal is modelled as a continuous piecewise linear function of \mjeqn{x}{x}. That is \mjdeqn{y_i=f(x_i)+\epsilon_i}{y_i=f(x_i)+e_i} where \mjeqn{f(x)}{f(x)} is a continuous
@@ -59,9 +62,6 @@ different value of \mjeqn{\beta}{beta} -- this is possible
 using CPOP with the CROPS algorithm \code{\link{cpop.crops}}. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
 and \mjeqn{\beta}{beta}: e.g. if we double the variances and half the value of \mjeqn{\beta}{beta} we will obtain the same estimates for the number and location of the changes and the
 underlying function.
-}
-\details{
-Algorithm for finding the best segmentation of data for a change-in-slope model.
 }
 \examples{
 library(cpop)

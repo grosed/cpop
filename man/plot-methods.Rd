@@ -4,7 +4,7 @@
 \name{plot}
 \alias{plot}
 \alias{plot,cpop.class,ANY-method}
-\title{Visualisation of Changepoint Locations and Data}
+\title{Visualise changepoint locations and associated data}
 \usage{
 \S4method{plot}{cpop.class,ANY}(x)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cpop.R
 \name{simchangeslope}
 \alias{simchangeslope}
-\title{A function for generating simulated data}
+\title{Generate simulated data}
 \usage{
 simchangeslope(x, changepoints, change.slope, sd = 1)
 }

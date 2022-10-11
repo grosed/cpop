@@ -3,7 +3,7 @@
 \name{cpop.crops.models}
 \alias{cpop.crops.models}
 \alias{cpop.crops.models,cpop.crops.class-method}
-\title{Obtain the cpop models created by cpop.crops}
+\title{Extract the cpop models created by cpop.crops}
 \usage{
 cpop.crops.models(object)
 }

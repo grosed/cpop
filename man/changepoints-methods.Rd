@@ -4,7 +4,7 @@
 \name{changepoints}
 \alias{changepoints}
 \alias{changepoints,cpop.class-method}
-\title{Changepoint Locations}
+\title{Changepoint locations}
 \arguments{
 \item{object}{An instance of an cpop S4 class produced by \code{\link{cpop}}.}
 }

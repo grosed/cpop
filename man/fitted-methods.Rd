@@ -4,7 +4,7 @@
 \name{fitted}
 \alias{fitted}
 \alias{fitted,cpop.class-method}
-\title{Extract Model Fitted Values}
+\title{Extract model fitted values}
 \usage{
 \S4method{fitted}{cpop.class}(object)
 }

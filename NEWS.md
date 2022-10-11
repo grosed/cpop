@@ -7,7 +7,8 @@
 - Removed redundant (non exported) null2na functions
 - Changed name of vignettes from article to cpop
 - Corrected details of reference in DESCRIPTION file
-
+- Changed titles in documentation to sentence case
+- Improved documentation of cpop method
 
 ##  cpop 1.0.3 
 
@@ -20,7 +21,7 @@
 - Added extra documentation regarding default values for beta in cpop
 - Renamed sigma parameter to sd in simulate 
 - Updated documentation and examples for cpop.crops method
-- Fixed some broken urls
+- Fixed some broken URLs
 
 
 ##  cpop 1.0.0 

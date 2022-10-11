@@ -1,4 +1,4 @@
-#' Wavenumber Power Spectra data.
+#' Wavenumber power spectra data
 #'
 #' Data of power spectra of velocity as a function of wavenumber obtained from climate models of the Atlantic Ocean for two different months and
 #' two climate scenarios: a present-day one (run 2000) and a future scenario (run 2100). See \insertRef{richards-whitt}{cpop}  

@@ -16,11 +16,11 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 
 
 
-#' A function for calculating the cost of a model fitted by cpop
+#' Calculate the cost of a model fitted by cpop
 #'
 #' @name cost
 #'
-#' @description Calculates the penalised cost of a model fitted by cpop using the residual sum of squares and the penalty values.
+#' @description Calculate the penalised cost of a model fitted by cpop using the residual sum of squares and the penalty values.
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #'
@@ -55,7 +55,7 @@ setMethod("cost",signature=list("cpop.class"),
           })	      
 
 
-#' A function for generating simulated data
+#' Generate simulated data
 #'
 #' @name simchangeslope
 #'
@@ -112,7 +112,7 @@ simchangeslope<-function(x,changepoints,change.slope,sd=1)
 }
 
 
-#' Visualisation of Changepoint Locations and Data
+#' Visualise changepoint locations and associated data
 #'
 #' @name plot
 #'
@@ -175,7 +175,7 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 
 
 
-#' Summary of cpop Analysis.
+#' Summarise a cpop analysis
 #'
 #' @name summary
 #'
@@ -240,7 +240,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 })
 
 
-#' Displays an S4 object produced by cpop.
+#' Display the S4 object produced by cpop
 #'
 #' @name show
 #'
@@ -277,7 +277,7 @@ setMethod("show",signature=list("cpop.class"),function(object)
 })
 
 
-#' Extract Model Fitted Values
+#' Extract model fitted values
 #'
 #' @name fitted
 #'
@@ -332,7 +332,7 @@ setMethod("fitted",signature=list("cpop.class"),
           })	      
 
 
-#' Changepoint Locations
+#' Changepoint locations
 #'
 #' @name changepoints
 #'
@@ -379,10 +379,13 @@ setMethod("changepoints",signature=list("cpop.class"),
 	      }
 	      return(df)
           })	      
-#' cpop
+
+#' Find the best segmentation of data for a change-in-slope model
 #'
-#'  Algorithm for finding the best segmentation of data for a change-in-slope model.
-#' 
+#' @name cpop
+#'
+#' @description The CPOP algorithm fits a change-in-slope model to data.
+#'
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
 #' @param grid An ordered vector of possible locations for the change points. If this is NULL, then this is set to x, the vector of times/locations of the data points.
@@ -394,7 +397,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #'
 #' @return An instance of an S4 class of type cpop.class.
 #'
-#' @description \loadmathjax{} The CPOP algorithm fits a change-in-slope model to data. It assumes that we have we have data points \mjeqn{(y_1,x_1),\ldots,(y_n,x_n)}{(y_1,x_1),...,(y_n,x_n)}, ordered
+#' @details \loadmathjax{} The CPOP algorithm fits a change-in-slope model to data. It assumes that we have we have data points \mjeqn{(y_1,x_1),\ldots,(y_n,x_n)}{(y_1,x_1),...,(y_n,x_n)}, ordered
 #' so that \mjeqn{x_1 < x_2 < \cdots < x_n}{x_1 < x_2 < ... < x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
 #' plus noise where the signal is modelled as a continuous piecewise linear function of \mjeqn{x}{x}. That is \mjdeqn{y_i=f(x_i)+\epsilon_i}{y_i=f(x_i)+e_i} where \mjeqn{f(x)}{f(x)} is a continuous
 #' piecewise linear function.
@@ -419,6 +422,8 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' using CPOP with the CROPS algorithm \code{\link{cpop.crops}}. Larger values of \mjeqn{\beta}{beta} will lead to functions with fewer changes. Also there is a trade-off between the variances of the residuals
 #' and \mjeqn{\beta}{beta}: e.g. if we double the variances and half the value of \mjeqn{\beta}{beta} we will obtain the same estimates for the number and location of the changes and the
 #' underlying function.
+#'
+#' @rdname cpop
 #'
 #' @references \insertRef{doi:10.1080/10618600.2018.1512868}{cpop}
 #'
@@ -511,7 +516,7 @@ parameters<-function(object)
   return(pars)
 }
 
-#' A function for estimating the fit of a cpop model
+#' Estimate the fit of a cpop model
 #'
 #' @name estimate
 #'
@@ -557,7 +562,7 @@ setMethod("estimate",signature=list("cpop.class"),
           })	      
 
 
-#' Extracts residuals from a cpop model
+#' Extract residuals from a cpop model
 #'
 #' @name residuals
 #'

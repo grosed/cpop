@@ -3,7 +3,7 @@
 \name{residuals}
 \alias{residuals}
 \alias{residuals,cpop.class-method}
-\title{Extracts residuals from a cpop model}
+\title{Extract residuals from a cpop model}
 \usage{
 \S4method{residuals}{cpop.class}(object)
 }

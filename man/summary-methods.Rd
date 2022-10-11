@@ -4,7 +4,7 @@
 \name{summary}
 \alias{summary}
 \alias{summary,cpop.class-method}
-\title{Summary of cpop Analysis.}
+\title{Summarise a cpop analysis}
 \usage{
 \S4method{summary}{cpop.class}(object)
 }

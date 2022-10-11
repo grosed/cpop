@@ -80,7 +80,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 }
 
 
-#' Obtain the cpop models created by cpop.crops
+#' Extract the cpop models created by cpop.crops
 #'
 #' @name cpop.crops.models
 #'

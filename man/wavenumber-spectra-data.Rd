@@ -3,7 +3,7 @@
 \docType{data}
 \name{wavenumber_spectra}
 \alias{wavenumber_spectra}
-\title{Wavenumber Power Spectra data.}
+\title{Wavenumber power spectra data}
 \format{
 A dataframe with 5 columns and 247 rows. The first column is wavenumber (cycles per metre). 
 The other columns are the power spectra values for different months (Feb run 2000, Aug run 2000, Feb run 2100, Aug run 2100).
