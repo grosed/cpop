@@ -11,7 +11,7 @@ cpop.crops(
   grid = x,
   beta_min = 1.5 * log(length(y)),
   beta_max = 2.5 * log(length(y)),
-  sd = 1,
+  sd = sqrt(mean(diff(diff(y))^2)/6),
   minseglen = 0,
   prune.approx = FALSE
 )
@@ -27,7 +27,8 @@ cpop.crops(
 
 \item{beta_max}{Maximum value of the penalty range to be searched. Default is \code{2.5*log(length(y))}}
 
-\item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation. Default value is 1.}
+\item{sd}{Estimate of residual standard deviation. Can be a single numerical value or a vector of values for the case of varying standard deviation.
+Default value is \code{sd = sqrt(mean(diff(diff(y))^2)/6)}.}
 
 \item{minseglen}{The minimum allowable segment length, i.e. distance between successive changepoints. Default is 0.}
 

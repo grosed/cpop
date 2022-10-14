@@ -101,13 +101,13 @@ setMethod("cost",signature=list("cpop.class"),
 #' @export
 simchangeslope<-function(x,changepoints,change.slope,sd=1)
 {
-  K=length(changepoints)
+  K <- length(changepoints)
   mu=rep(0,length(x))
   for(k in 1:K)
   {
-     mu=mu+change.slope[k]*pmax(x-changepoints[k],0)
+     mu <- mu+change.slope[k]*pmax(x-changepoints[k],0)
   }
-  y=mu+rnorm(length(x),0.0,sd)
+  y <- mu+rnorm(length(x),0.0,sd)
   return(y)
 }
 
@@ -468,15 +468,28 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' print(p)
 #'
 #' @export
-cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=NULL,minseglen=0,prune.approx=FALSE)
+cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(diff(y))^2)/6),minseglen=0,prune.approx=FALSE)
 {
+    if(base::missing(beta))
+    {
+       cat("No value set for beta, so the default value of beta=2log(n), where n is the number of data points, has been used.","\n",
+           "This default value is appropriate if the noise is IID Gaussian and the value of sd is a good estimate of the standard","\n",
+	   "deviation of the noise. If these assumptions do not hold, the estimate of the number of changepoints may be inaccurate.","\n",
+	   "To check robustness use cpop.crops with beta_min and beta_max arguments.","\n\n",sep="")
+    }
+    if(base::missing(sd))
+    {
+       cat("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of","\n",
+           "the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised","\n",
+	   "to check this by comparing the standard deviation of the residuals to the estimated value used for sd.","\n",sep="")
+    }
     if(is.null(sd))
     {
       sd <- sqrt(mean(diff(diff(y))^2)/6)
     }
     if(length(sd)!=length(y))
     {
-      sd=rep(sd[1],length(y))
+      sd <- rep(sd[1],length(y))
     }
     sigsquared<-sd^2
     if(minseglen != 0)
@@ -493,17 +506,17 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=NULL,minseglen=
 
 design<-function(object,x=object@x)
 {
-  n=length(x)
+  n <- length(x)
   cpts<-object@changepoints[-1]
-  p=length(cpts)
-  X=matrix(NA,nrow=n,ncol=p+1)
-  X[,1]=1
-  X[,2]=x-x[1]
+  p <- length(cpts)
+  X <- matrix(NA,nrow=n,ncol=p+1)
+  X[,1] <- 1
+  X[,2] <- x-x[1]
   if(p>1)
   {
     for(i in 1:(p-1))
     {
-      X[,i+2]=pmax(rep(0,n),x-cpts[i])
+      X[,i+2] <- pmax(rep(0,n),x-cpts[i])
     }
   }
   return(X)
@@ -511,7 +524,7 @@ design<-function(object,x=object@x)
 
 parameters<-function(object)
 {
-  n=length(object@y)
+  n <- length(object@y)
   cpts<-object@changepoints[-1]	
   p<-length(cpts)
   W<-diag(object@sd^-2)
@@ -630,28 +643,28 @@ setMethod("residuals",signature=list("cpop.class"),
 
 cpop.fit<-function(y,x,out.changepoints,sigsquared)
 {
-  n=length(y)
-  if(length(sigsquared)!=n)
+  n <- length(y)
+  if(length(sigsquared) != n)
   {
-     sigsquared=rep(sigsquared[1],n)
+     sigsquared <- rep(sigsquared[1],n)
   }
-  p=length(out.changepoints)
-  W=diag(sigsquared^-1)
-  X=matrix(NA,nrow=n,ncol=p+1)
-  X[,1]=1
-  X[,2]=x-x[1]
+  p <- length(out.changepoints)
+  W <- diag(sigsquared^-1)
+  X <- matrix(NA,nrow=n,ncol=p+1)
+  X[,1] <- 1
+  X[,2] <- x-x[1]
   if(p>1)
   {
     for(i in 1:(p-1))
     {
-      X[,i+2]=pmax(rep(0,n),x-out.changepoints[i])
+      X[,i+2] <- pmax(rep(0,n),x-out.changepoints[i])
 
     }
   }
-  XTX=t(X)%*%W%*%X
-  beta=as.vector(solve(XTX)%*%t(X)%*%W%*%y)
-  fit=X%*%beta
-  residuals=y-fit
+  XTX <- t(X)%*%W%*%X
+  beta <- as.vector(solve(XTX)%*%t(X)%*%W%*%y)
+  fit <- X%*%beta
+  residuals <- y-fit
   return(list(fit=fit,residuals=residuals,X=X,pars=beta))
 }
 
@@ -690,7 +703,7 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
     SP[i+1]<-SP[i]+1/sigsquared[i]
   }
   
-  x0=c(2*x[1]-x[2],x)
+  x0 <- c(2*x[1]-x[2],x)
   
   coeffs<-matrix(0,ncol=5,nrow=1) #first two columns are current time point and most recent changepoint, final three are coefficients for cost
   coeffs[1,5]<--beta
@@ -702,16 +715,16 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
   ## code minimise 1/(2sd^2)*RSS rather than RSS/sd^2
   ## hence need to have sd^2 
  #### 
- sigsquared=sigsquared/2
+ sigsquared <- sigsquared/2
 
   for(taustar in 1:n){
     new.CPvec<-paste(CPvec,taustar,sep=",")
     ##update coefficients --THIS HAS BEEN CHANGED FROM CPOP CODE
     ##CURRENTLY CHANGE ONLY IN R CODE VERSION
    #if(useC==FALSE){
-     new.coeffs=coeff.update.uneven.var(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta)
+     new.coeffs <- coeff.update.uneven.var(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta)
     #}    else if(useC==TRUE){
-    #  new.coeffs=coeff.update.c(coeffs,S,SJ,SS,taustar,sigsquared,beta)
+    #  new.coeffs <- coeff.update.c(coeffs,S,SJ,SS,taustar,sigsquared,beta)
     #} else{stop("useC must be a TRUE or FALSE value")
     #}
    # if(taustar==2){browser()}
@@ -719,22 +732,22 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
     ###################################################pruning bit##########  
     if(length(new.coeffs[,1])>1){
       ##added###
-      #keep1=prune1(new.coeffs,taustar) ##first pruning
-      keep1=1:length(new.coeffs[,1])
-      new.coeffs.p=new.coeffs[keep1,]
-      new.CPvec=new.CPvec[keep1]
+      #keep1 <- prune1(new.coeffs,taustar) ##first pruning
+      keep1 <- 1:length(new.coeffs[,1])
+      new.coeffs.p <- new.coeffs[keep1,]
+      new.CPvec <- new.CPvec[keep1]
       ###########
       if(sum(keep1)>1){
-       keep2=prune2.c(new.coeffs.p)
-       new.coeffs.p=new.coeffs.p[keep2,]
-       new.CPvec=new.CPvec[keep2]
+       keep2 <- prune2.c(new.coeffs.p)
+       new.coeffs.p <- new.coeffs.p[keep2,]
+       new.CPvec <- new.CPvec[keep2]
       }
     }else{
-      new.coeffs.p=new.coeffs
+      new.coeffs.p <- new.coeffs
     }
     ####PELT PRUNE############################
     if(taustar>2){
-      keeppelt=peltprune(new.coeffs,beta)
+      keeppelt <- peltprune(new.coeffs,beta)
       coeffs<-coeffs[keeppelt,]
       CPvec<-CPvec[keeppelt]
     }
@@ -769,18 +782,18 @@ CPOP.uneven_impl<-function(y,x,beta,sigsquared=1)
 ###avoids loop
 ########################################################################################
 
-coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
+coeff.update.uneven.var <- function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
   
   coeff.new<-coeffs
-  coeff.new[,2]=coeffs[,1] 
+  coeff.new[,2] <- coeffs[,1] 
   coeff.new[,1]<-taustar
   
   sstar<-coeff.new[,2]
   Xs<-x0[sstar+1]
   Xt<-x0[taustar+1]
-  seglen=Xt-Xs
+  seglen <- Xt-Xs
   
-  n.obs=taustar-sstar
+  n.obs <- taustar-sstar
   #A<-(SX2[taustar+1]-SX2[sstar+1]-2*Xs*(SX[taustar+1]-SX[sstar+1])+(SP[taustar+1]-SP[sstar+1])*Xs^2)/(seglen^2)
   #B<- 2*( (Xt+Xs)*(SX[taustar+1]-SX[sstar+1])-(SP[taustar+1]-SP[sstar+1])*Xt*Xs-(SX2[taustar+1]-SX2[sstar+1]))/(seglen^2)
   #C<-(-2)/(seglen)*(SXY[taustar+1]-SXY[sstar+1]-Xs*(S[taustar+1]-S[sstar+1]))
@@ -797,10 +810,10 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
   FF<-coeffs.cpp[[6]]
 
 
-  m=length(sstar)
-  ind1=(1:m)[FF==0 & coeffs[,3]==0 & B==0]
-  ind2=(1:m)[FF==0 & coeffs[,3]==0 & B!=0]
-  ind3=(1:m)[!(FF==0 & coeffs[,3]==0)]
+  m <- length(sstar)
+  ind1 <- (1:m)[FF==0 & coeffs[,3]==0 & B==0]
+  ind2 <- (1:m)[FF==0 & coeffs[,3]==0 & B!=0]
+  ind3 <- (1:m)[!(FF==0 & coeffs[,3]==0)]
   if(length(ind1)>0){
     coeff.new[ind1,5]<-coeffs[ind1,5]+D[ind1]+beta
     coeff.new[ind1,4]<-C[ind1]
@@ -839,7 +852,7 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 ###################################PELT pruning function###################################################
 ###########################################################################################################
 
-peltprune=function(x,beta){
+peltprune <- function(x,beta){
   minx<-x[,5]-x[,4]^2/(4*x[,3])
   return(which(minx<=(min(minx)+2*beta)))  
 }

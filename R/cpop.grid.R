@@ -36,10 +36,10 @@ CPOP.grid.impl<-function(y,x,grid=NULL,beta,sigsquared=1,printiteration=FALSE){
   if(max(grid)<max(x)) grid=c(grid,max(x))
   if(length(sigsquared)!=n) sigsquared=rep(sigsquared[1],n)
   
-  ngrid=length(grid) ##ngrid is the number of grid points -- below n becomes ngrid throughout
+  ngrid <- length(grid) ##ngrid is the number of grid points -- below n becomes ngrid throughout
   
   ##CHANGE HERE -- x0 is grid with an addition of a 0th grid point. Defined in terms of grid not x
-  x0=c(2*x[1]-x[2],grid)
+  x0 <- c(2*x[1]-x[2],grid)
   
   ##THESE UPDATES ARE CHANGED.
   S<-0
@@ -50,7 +50,7 @@ CPOP.grid.impl<-function(y,x,grid=NULL,beta,sigsquared=1,printiteration=FALSE){
   SP<-0
   for(i in 1:ngrid){
     ##set index to be which observations are in the interval
-    index=(1:n)[x>x0[i]&x<=x0[i+1]]
+    index <- (1:n)[x>x0[i]&x<=x0[i+1]]
     if(length(index)>0){##change in summaries -- sum over observations
       S[i+1]<-S[i]+sum(y[index]/sigsquared[index])
       SS[i+1]<-SS[i]+sum(y[index]^2/sigsquared[index])
@@ -78,17 +78,17 @@ CPOP.grid.impl<-function(y,x,grid=NULL,beta,sigsquared=1,printiteration=FALSE){
     new.CPvec<-paste(CPvec,taustar,sep=",")
     ##update coefficients --THIS HAS BEEN CHANGED FROM CPOP CODE
     ##CURRENTLY CHANGE ONLY IN R CODE VERSION
-    new.coeffs=coeff.update.uneven.var(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta)
-    new.coeffs.p=new.coeffs
+    new.coeffs <- coeff.update.uneven.var(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta)
+    new.coeffs.p <- new.coeffs
     if(taustar!=ngrid){##n->ngrid #skip pruning on last step
     ###################################################pruning bit##########  
       if(length(new.coeffs[,1])>1){
       ##added###
       ###########
-       keep2=prune2.c(new.coeffs.p)
-       # keep2=prune2b(new.coeffs.p) ##find set of functions to keep
-       new.coeffs.p=new.coeffs.p[keep2,]
-       new.CPvec=new.CPvec[keep2]
+       keep2 <- prune2.c(new.coeffs.p)
+       # keep2 <- prune2b(new.coeffs.p) ##find set of functions to keep
+       new.coeffs.p <- new.coeffs.p[keep2,]
+       new.CPvec <- new.CPvec[keep2]
       }
     ####PELT PRUNE############################
       if(length(new.coeffs)>5 ){
@@ -109,7 +109,7 @@ CPOP.grid.impl<-function(y,x,grid=NULL,beta,sigsquared=1,printiteration=FALSE){
   if(!is.matrix(coeffscurr)){coeffscurr<-t(as.matrix(coeffscurr))} #makes sure coeffscurr is in the right format
   ##HACK here to make ttemp correct if coeffscurr[,3]==0
   ttemp<-coeffscurr[,5]
-  index=(1: (length(coeffscurr)/5))[coeffscurr[,3]>0] 
+  index <- (1: (length(coeffscurr)/5))[coeffscurr[,3]>0] 
   if(length(index)>0){ 
     ttemp[index]<-coeffscurr[index,5]-(coeffscurr[index,4]^2)/(4*coeffscurr[index,3])}
   mttemp<-min(ttemp)
@@ -128,16 +128,16 @@ CPOP.grid.impl<-function(y,x,grid=NULL,beta,sigsquared=1,printiteration=FALSE){
 ###avoids loop
 ########################################################################################
 
-coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
+coeff.update.uneven.var <- function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
   
   coeff.new<-coeffs
-  coeff.new[,2]=coeffs[,1] 
+  coeff.new[,2] <- coeffs[,1] 
   coeff.new[,1]<-taustar
   
   sstar<-coeff.new[,2]
   Xs<-x0[sstar+1]
   Xt<-x0[taustar+1]
-  seglen=Xt-Xs
+  seglen <- Xt-Xs
 
 
 
@@ -161,10 +161,10 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 
 
 
-  m=length(sstar)
-  ind1=(1:m)[FF==0 & coeffs[,3]==0 & B==0]
-  ind2=(1:m)[FF==0 & coeffs[,3]==0 & B!=0]
-  ind3=(1:m)[!(FF==0 & coeffs[,3]==0)]
+  m <- length(sstar)
+  ind1 <- (1:m)[FF==0 & coeffs[,3]==0 & B==0]
+  ind2 <- (1:m)[FF==0 & coeffs[,3]==0 & B!=0]
+  ind3 <- (1:m)[!(FF==0 & coeffs[,3]==0)]
   if(length(ind1)>0){
     coeff.new[ind1,5]<-coeffs[ind1,5]+D[ind1]+beta
     coeff.new[ind1,4]<-C[ind1]
@@ -191,9 +191,9 @@ coeff.update.uneven.var=function(coeffs,S,SXY,SS,SX,SX2,SP,x0,taustar,beta){
 ##first prune of functions
 ## xx is matrix of functions
 ############################################################################################################
-prune1=function(xx,taustar){
+prune1 <- function(xx,taustar){
   min.vals<-xx[,5]-(xx[,4]^2)/(2*xx[,3])
-  m=min(min.vals[xx[,2]==taustar-1])
+  m <- min(min.vals[xx[,2]==taustar-1])
   keep<-c(rep(T,length(min.vals[xx[,2]!=taustar-1])),(min.vals[xx[,2]==taustar-1])<=m)
   return(keep) ##keep only those with a smaller minimum.
 }
@@ -205,45 +205,45 @@ prune1=function(xx,taustar){
 ##version to avoid nested loops
 ##########################################################################################################
 
-prune2b=function(x){
+prune2b <- function(x){
   Sets<-list()
-  n=length(x[,1])
-  vec=(1:n)
+  n <- length(x[,1])
+  vec <- (1:n)
   
-  tcurr= -Inf
+  tcurr <- -Inf
   
   whichfun<-which(x[,3]==min(x[,3])) #which element of vec gives min value at -Infinity--smallest theta^2 coeff; then largest theta coeff; then smallest constant
   whichfun<-whichfun[which(x[whichfun,4]==max(x[whichfun,4]))]
   whichfun<-whichfun[which(x[whichfun,5]==min(x[whichfun,5]))]
-  whichfun=whichfun[1] #####Introduced this to avoid multiple minimima
+  whichfun <- whichfun[1] #####Introduced this to avoid multiple minimima
   
   Sets[[whichfun]]<-c(tcurr)
-  diffcoeffs=matrix(NA,nrow=n,ncol=3)
-  intercepts=rep(NA,n)
-  disc=rep(NA,n)
+  diffcoeffs <- matrix(NA,nrow=n,ncol=3)
+  intercepts <- rep(NA,n)
+  disc <- rep(NA,n)
   while(length(vec)>1){ #while functions being considered is bigger than 1
     intercepts[1:n]<-NA
     diffcoeffs[1:(length(vec)),]<-t(t(x[vec,3:5])-x[whichfun,3:5]) #difference between coeffs at i and current function
     disc[1:(length(vec))]<-diffcoeffs[1:(length(vec)),2]^2-4*diffcoeffs[1:(length(vec)),1]*diffcoeffs[1:(length(vec)),3] #discriminent of difference quad
     
-    ind1=(1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]==0] ##disc>0 for quadratic to cross.
-    ind2=(1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]!=0] ##disc>0 for quadratic to cross.
+    ind1 <- (1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]==0] ##disc>0 for quadratic to cross.
+    ind2 <- (1:length(vec))[disc[1:(length(vec))]>0 & diffcoeffs[1:(length(vec)),1]!=0] ##disc>0 for quadratic to cross.
     
     if(length(ind1)>0){
-      r1= - diffcoeffs[ind1,3]/diffcoeffs[ind1,2]
+      r1 <- - diffcoeffs[ind1,3]/diffcoeffs[ind1,2]
       if(sum(r1>tcurr)>0){
-        intercepts[ind1[r1>tcurr]]= r1[r1>tcurr]
+        intercepts[ind1[r1>tcurr]] <- r1[r1>tcurr]
       }
     }
     if(length(ind2)>0){
-      r1=(-diffcoeffs[ind2,2]-sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
-      r2=(-diffcoeffs[ind2,2]+sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
+      r1 <- (-diffcoeffs[ind2,2]-sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
+      r2 <- (-diffcoeffs[ind2,2]+sign(diffcoeffs[ind2,1])*sqrt(disc[ind2]))/(2*diffcoeffs[ind2,1])
       ##only want roots if > tcurr
       if(sum(r1>tcurr)>0){
-        intercepts[ind2[r1>tcurr]]=r1[r1>tcurr]
+        intercepts[ind2[r1>tcurr]] <- r1[r1>tcurr]
       }
       if(sum(r1<=tcurr & r2>tcurr)>0){
-        intercepts[ind2[r1<=tcurr & r2>tcurr]]=r2[r1<=tcurr & r2>tcurr]  
+        intercepts[ind2[r1<=tcurr & r2>tcurr]] <- r2[r1<=tcurr & r2>tcurr]  
       }
     }
     
@@ -286,10 +286,10 @@ prune2.c<-function(x){
 ###################################PELT pruning function###################################################
 ###########################################################################################################
 
-peltprune=function(x,beta){
+peltprune <- function(x,beta){
   if(length(x)==5) return(1)
   minx<-x[,5]
-  index=(1:dim(x)[1])[x[,3]>0]
+  index <- (1:dim(x)[1])[x[,3]>0]
   if(length(index)>0) minx[index]<-x[index,5]-x[index,4]^2/(4*x[index,3]) ####NEED THIS TO BE x[,5] if x[,4]=x[,3]=0
   return(which(minx<=(min(minx)+2*beta)))  
 }

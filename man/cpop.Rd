@@ -9,7 +9,7 @@ cpop(
   x = 1:length(y) - 1,
   grid = x,
   beta = 2 * log(length(y)),
-  sd = NULL,
+  sd = sqrt(mean(diff(diff(y))^2)/6),
   minseglen = 0,
   prune.approx = FALSE
 )
