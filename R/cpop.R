@@ -102,7 +102,7 @@ setMethod("cost",signature=list("cpop.class"),
 simchangeslope<-function(x,changepoints,change.slope,sd=1)
 {
   K <- length(changepoints)
-  mu=rep(0,length(x))
+  mu <- rep(0,length(x))
   for(k in 1:K)
   {
      mu <- mu+change.slope[k]*pmax(x-changepoints[k],0)
