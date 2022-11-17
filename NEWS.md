@@ -1,5 +1,9 @@
 #  **News**
 
+## cpop 1.0.5
+
+- Use message to return messages instead of cat.
+
 ## cpop 1.0.4
 
 - Added NEWS.md

@@ -472,16 +472,12 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(
 {
     if(base::missing(beta))
     {
-       cat("No value set for beta, so the default value of beta=2log(n), where n is the number of data points, has been used.","\n",
-           "This default value is appropriate if the noise is IID Gaussian and the value of sd is a good estimate of the standard","\n",
-	   "deviation of the noise. If these assumptions do not hold, the estimate of the number of changepoints may be inaccurate.","\n",
-	   "To check robustness use cpop.crops with beta_min and beta_max arguments.","\n\n",sep="")
+      message("No value set for beta, so the default value of beta=2log(n), where n is the number of data points, has been used. This default value is appropriate if the noise is IID Gaussian and the value of sd is a good estimate of the standard deviation of the noise. If these assumptions do not hold, the estimate of the number of changepoints may be inaccurate. To check robustness use cpop.crops with beta_min and beta_max arguments.")
+
     }
     if(base::missing(sd))
     {
-       cat("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of","\n",
-           "the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised","\n",
-	   "to check this by comparing the standard deviation of the residuals to the estimated value used for sd.","\n",sep="")
+       message("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised to check this by comparing the standard deviation of the residuals to the estimated value used for sd.")
     }
     if(is.null(sd))
     {
@@ -489,6 +485,7 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(
     }
     if(length(sd)!=length(y))
     {
+      message("Length of sd and y differ. Applying first value of sd to all values of y.")
       sd <- rep(sd[1],length(y))
     }
     sigsquared<-sd^2
