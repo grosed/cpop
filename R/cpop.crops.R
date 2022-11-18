@@ -62,10 +62,15 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 {
     if(base::missing(sd))
     {
-       cat("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of","\n",
-           "the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised","\n",
-	   "to check this by comparing the standard deviation of the residuals to the estimated value used for sd.","\n",sep="")
+
+       message("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised to check this by comparing the standard deviation of the residuals to the estimated value used for sd.")
     }
+    if(length(sd)!=length(y))
+    {
+      message("Length of sd and y differ. Applying first value of sd to all values of y.")
+      sd <- rep(sd[1],length(y))
+    }
+
     CPT.init <- function(y,x,grid,sd,minseglen,prune.approx)
     {
        return(
