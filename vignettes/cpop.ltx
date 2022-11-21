@@ -13,16 +13,16 @@
 %% almost as usual
 \author{Paul Fearnhead\\Lancaster Universtity \And 
         Daniel Grose\\Lancaster University}
-\title{\pkg{cpop}: Detecting changes in piecewise-linear signals}
+\title{\pkg{cpop}: Detecting Changes in Piecewise-Linear Signals}
 
 %% for pretty printing and a nice hypersummary also set:
 \Plainauthor{Paul Fearnhead, Daniel Grose} %% comma-separated
-\Plaintitle{\pkg{cpop}: Detecting changes in piecewise-linear signals} %% without formatting
-\Shorttitle{\pkg{cpop}: Changes in slope} %% a short title (if necessary)
+\Plaintitle{\pkg{cpop}: Detecting Changes in Piecewise-Linear Signals} %% without formatting
+\Shorttitle{\pkg{cpop}: Detecting Changes in Piecewise-Linear signals} %% a short title (if necessary)
 
 %% an abstract and keywords
 \Abstract{
-Changepoint detection is an important problem with applications across many application domains. There are many different types of changes that one may wish to detect, and a wide-range of algorithms and software for detecting them. However there are relatively few approaches for detecting changes-in-slope in the mean of a signal plus noise model. We describe the \proglang{R} package, \pkg{cpop}, available on the Comprehensive R Archive Network (CRAN). This package implements CPOP, a dynamic programming algorithm, to find the optimal set of changes that minimises an $L_0$ penalised cost, with the cost being a weighted residual sum of squares. The package has extended the CPOP algorithm so it can analyse data that is unevenly spaced, allow for heterogeneous noise variance, and allows for a grid of potential change locations to be different from the locations of the data points. There is also an implementation of that uses the CROPS algorithm to detect all segmentations that are optimal as you vary the $L_0$ penalty for adding a change across a continuous range of values.
+Changepoint detection is an important problem with applications across many application domains. There are many different types of changes that one may wish to detect, and a wide-range of algorithms and software for detecting them. However there are relatively few approaches for detecting changes-in-slope in the mean of a signal plus noise model. We describe the \proglang{R} package, \pkg{cpop}, available on the Comprehensive R Archive Network (CRAN). This package implements CPOP, a dynamic programming algorithm, to find the optimal set of changes that minimises an $L_0$ penalised cost, with the cost being a weighted residual sum of squares. The package has extended the CPOP algorithm so it can analyse data that is unevenly spaced, allow for heterogeneous noise variance, and allows for a grid of potential change locations to be different from the locations of the data points. There is also an implementation that uses the CROPS algorithm to detect all segmentations that are optimal as you vary the $L_0$ penalty for adding a change across a continuous range of values.
 }
 \Keywords{changepoints, change-in-slope, dynamic programming, piecewise linear models, structural breaks}
 \Plainkeywords{changepoints, change-in-slope, dynamic programming, piecewise linear models, structural breaks} %% without formatting
@@ -89,14 +89,16 @@ Despite these challenges, there are three methods developed specifically for det
 
 The purpose of this paper is to describe the \pkg{cpop} package, which is written in \proglang{R}, and implements the CPOP algorithm. The latest version of the package was developed in response to an applied challenge, see Section \ref{sec:app}, where the data was unevenly spaced and the noise was not homoscedastic, aspects that previous implementations of change-in-slope algorithms could not handle. How the CPOP algorithm is extended to deal with these features is described in Section \ref{sec:background}, together with allowing the locations of the changes in slope to not coincide with the observations. This latter aspect can be helpful in reducing the computational cost of the CPOP algorithm for high frequency data by, e.g., searching for segmentations that only allow changes at a smaller grid of possible locations. Section \ref{sec:cpop} describes the basic functionality of the package, with the extensions to allow for unevenly spaced, heteroscedastic data described, and to specify the grid of potential change locations, in Section \ref{sec:extensions}. This latter section also shows how to impose a minimum segment length and how to implement CPOP within the CROPS algorithm \citep{haynes2017computationally} to obtain all segmentations as we vary the value of $L_0$ penalty. An application of CPOP to analyse decay of spectra from ocean models is shown in Section \ref{sec:app}.
 
-\subsection{R Packages for Changepoint Detection}
+\subsection{Software for changepoint detection}
 
-There are both many different types of change that one may wish to detect, and many different approaches to detecting multiple changes. Consequently there are a wide range of change algorithms with associated packages in \proglang{R}. For example the \pkg{changepoint} package \citep{killick2014changepoint} implements dynamic programming algorithms, such as PELT, for detecting changes in mean, variance or mean and variance. Other dynamic programming algorithms include \pkg{fpop} and \pkg{gfpop} \citep{runge2020gfpop} that implements the functional optimal partitioning algorithm \citep{maidstone2017optimal} for detecting changes in mean, with the latter package allowing for flexibility as to how the mean changes (such as monotonically increasing) and for different loss functions for measuring fit to data. The \pkg{breakfast} package implements a range of methods based on recursively applying a test to detect a single change, for example wild binary segmentation \citep{fryzlewicz2014wild} and IsolateDetect \citep{anastasiou2022detecting}; whilst \pkg{mosum} \citep{meier2021mosum} implements the MOSUM procedure. Packages \pkg{stepR} and \pkg{FDRseg} implement the multiscale approaches of \cite{frick2014multiscale}, \cite{pein2017heterogeneous} and \cite{li2016fdr}.
+Currently most software for changepoint detection is available in \proglang{R} \cite[the main exception being the \pkg{ruptures} \proglang{Python} package of][which has similar functionality to the \pkg{changepoint } described below]{truong2018ruptures}.
+There are both many different types of change that one may wish to detect, and many different approaches to detecting multiple changes. Consequently there are a wide range of change algorithms with associated packages in \proglang{R}. For example the \pkg{changepoint} package \citep{killick2014changepoint} implements dynamic programming algorithms, such as PELT, for detecting changes in mean, variance or mean and variance. Other dynamic programming algorithms include \pkg{fpop} and \pkg{gfpop} \citep{runge2020gfpop} that implements the functional optimal partitioning algorithm \citep{maidstone2017optimal} for detecting changes in mean, with the latter package allowing for flexibility as to how the mean changes (such as monotonically increasing) and for different loss functions for measuring fit to data. The \pkg{breakfast} package implements a range of methods based on recursively applying a test to detect a single change, for example wild binary segmentation \citep{fryzlewicz2014wild} and IsolateDetect \citep{anastasiou2022detecting}; whilst \pkg{mosum} \citep{meier2021mosum} implements the MOSUM procedure. Packages \pkg{stepR} \cite[]{stepR} and \pkg{FDRseg} implement the multiscale approaches of \cite{frick2014multiscale}, \cite{pein2017heterogeneous} and \cite{li2016fdr}.
 
 Separately there are packages that perform non-parametric change detection, for example \pkg{ecp} \citep{james2015ecp} implements the method of \cite{matteson2014nonparametric}, while \pkg{changepoint.np}  implements the method of \cite{haynes2017NP}. There are also methods for analysing multiple dimensional data streams, such as \pkg{InspectChangepoint} \citep{wang2018high}, %\pkg{changepoint.mv} \citep{}
 and \pkg{changepoint.geo} \citep{grundy2020high}; Bayesian methods, such as \pkg{bcp} \citep{erdman2008bcp}; and methods that implement online procedures such as \pkg{CPM} \citep{ross2015parametric} and \pkg{FoCUS} \citep{romano2021fast}.
 
-However, as mentioned above, there are more limited methods for specifically detecting changes-in-slope. The trend filtering algorithm can be implemented using the \code{trendfilter} function from the \pkg{genlasso} \citep{genlasso} package, and the NOT algorithm can be implemented using the \pkg{not} package or is available within \pkg{breakfast}. However current implementations of these do not allow for unevenly spaced, heterogeneous observations or minimum segment lengths. (Though there is flexibility within the \pkg{genlasso} package for implementing general lasso algorithms, and these can be constructed to fit a trend-filtering model to unevenly spaced data). 
+However, as mentioned above, there are more limited methods for specifically detecting changes-in-slope.  The trend filtering algorithm can be implemented using the \code{trendfilter} function from the \pkg{genlasso} \citep{genlasso} package, and the NOT algorithm can be implemented using the \pkg{not} package or is available within \pkg{breakfast}. However current implementations of these do not allow for unevenly spaced, heterogeneous observations or minimum segment lengths, which are all features that can be included within the latest release of the \pkg{cpop} package that is described in this article. (Though there is flexibility within the \pkg{genlasso} package for implementing general lasso algorithms, and these can be constructed to fit a trend-filtering model to unevenly spaced data). 
+
 
 %
 %
@@ -112,9 +114,9 @@ y_i=f(x_i)+\epsilon_i,
 \end{equation}
 where $f(x)$ is a continuous piecewise linear function, and $\epsilon_i$ is noise. If the function $f(x)$ has $K$ changes in slope in the open interval $(x_1,x_n)$, and these occur at $x$-values $\tau_1,\ldots,\tau_K$, and we define $\tau_0$ and $\tau_{K+1}$ to be arbitrary values such that $\tau_0\leq x_1$ and $\tau_{K+1}\geq n$ then we can uniquely define $f(x)$ on $[x_1,x_n]$ by specifying the values $f(\tau_i)$ for $i=0,\ldots,K+1$. The function $f(x)$ can then be obtained via straight-line interpolation between the points $(\tau_i,f(\tau_i))$.
 
-Our interest is in estimating the number of changes in slope, $K$, their locations, $\tau_1,\ldots,\tau_K$, and the underlying signal. The latter is equivalent to estimating $f(\tau_i)$ for $i=0,\ldots,K+1$. To simplify notation we will denote these values by $\alpha_0,\ldots,\alpha_{K+1}$, i.e.~ $\alpha_i=f(\tau_i)$ for $i=0,\ldots,K+1$. Also, for this and other quantities we will use the shorthand $\alpha_{i:j}$ for integers $i\leq j$ to be the ordered set of values, $\alpha_i,\ldots,\alpha_j$.
+Our interest is in estimating the number of changes in slope, $K$, their locations, $\tau_1,\ldots,\tau_K$, and the underlying signal. The latter is equivalent to estimating $f(\tau_i)$ for $i=0,\ldots,K+1$. To simplify notation we will denote these values by $\alpha_0,\ldots,\alpha_{K+1}$, so $\alpha_i=f(\tau_i)$ for $i=0,\ldots,K+1$. Also, for this and other quantities we will use the shorthand $\alpha_{i:j}$ for integers $i\leq j$ to be the ordered set of values, $\alpha_i,\ldots,\alpha_j$.
 
-\subsection{An $L_0$-Penalised Criteria}
+\subsection{An $L_0$-penalised criteria}
 
 To estimate the number and locations of the changes-in-slope, and the underlying signal, we will first introduce a grid of $x$-values, $g_{1:N}$ with these ordered so that $g_i<g_j$ if and only if $i<j$. Our estimate for $f(x)$ will be restricted to piecewise-linear functions whose slope is only allowed to change at these grid-points. We will define our estimator of $f(x)$ as the function that minimises a penalised cost that is a sum of the fit of the function to data, measured in terms of a weighted residual sum of squares, plus a penalty for each change-in-slope. That is we solve the following minimisation problem
 \begin{equation} \label{eq:penalised_cost}
@@ -129,17 +131,17 @@ This approach for estimating changes-in-slope was first proposed in \cite{fearnh
 
 Before we describe how to extend the approach in \cite{fearnhead2019detecting} to this more general estimator, we first give some comments on this and related approaches to estimating changes-in-slope. This approach is a common for estimating changes \citep{jackson2005algorithm,killick2012optimal} and the cost is often termed an $L_0$ penalised cost. This is to contrast it with $L_1$ penalised costs, such as implemented in trend-filtering \citep{kim2009ell_1,tibshirani2014adaptive} which are of similar form, except that the cost for adding a change-in-slope is linear in the size of the change-in-slope. The advantage of using an $L_1$ penalised cost is that solving the resulting minimisation problem is simpler -- however such an approach tends to over-estimate the number of changes, as shown in the introduction. An alternative approach to estimating changes-in-slope is to perform tests for a change-in-slope on data from randomly chosen intervals of $x$-values and to combine the results of these tests using the narrowest-over-threshold procedure of \cite{baranowski2016narrowest}. The current formulation and implementation of these alternative methods also make the simplifying assumptions of evenly spaced locations for the data, change-in-slope only at data point locations, and that the noise variance is constant. %For evenly spaced data points, for example when $x_i=i$, it may seem natural to take first differences of the data, and convert the change-in-slope problem into a change-in-mean problem. We can then apply one of the many methods for detecting changes in mean. This approach is not to be recommended, as these methods ignore the auto-correlation that is induced into the residuals of the differenced data, and it can be shown to have a much lower power than solving the change-in-slope problem directly. We explore this empirically in Section \ref{sec:comparison_evenly_spaced}.
 
-The choice of $\beta$ in (\ref{eq:penalised_cost}) is important for accurate estimates, with lower values of $\beta$ leading to larger estimates of $K$, the number of changes. If the noise is approximately Gaussian and independent, and the estimate of the noise variance is good, then $\beta=2\log n$ is an appropriate choice  \citep{fearnhead2019detecting}. In general these assumptions will not hold, and often larger values of $\beta$ are required to e.g. compensate for positively auto-correlated noise. Where possible we recommend evaluating sets of estimated changepoints obtained for a range of $\beta$ values, and these can obtained in a computationally efficient manner using the CROPS algorithm of \cite{haynes2017computationally}.
+The choice of $\beta$ in (\ref{eq:penalised_cost}) is important for accurate estimates, with lower values of $\beta$ leading to larger estimates of $K$, the number of changes. If the noise is approximately Gaussian and independent, and the estimate of the noise variance is good, then $\beta=2\log n$ is an appropriate choice  \citep{fearnhead2019detecting}. In general these assumptions will not hold, and often larger values of $\beta$ are required to compensate for positively auto-correlated noise. Where possible we recommend evaluating sets of estimated changepoints obtained for a range of $\beta$ values, and these can obtained in a computationally efficient manner using the CROPS algorithm of \cite{haynes2017computationally}.
 
-\subsection{Dynamic Programming Recursion}
+\subsection{Dynamic programming recursion}
 
-Solving (\ref{eq:penalised_cost}) is non-trivial as it involves minimising a non-convex function. Furthermore, standard dynamic programming algorithms for change points \citep{maidstone2017optimal}, e.g. those that recurse based on conditioning on the location of the most recent changepoint,  cannot be used because of the dependence across changepoints due to the continuity constraint. Thus we follow \cite{fearnhead2019detecting} and develop a dynamic programming recursion that conditions both on the location of the changepoints and the value of the mean at that changepoint.
+Solving (\ref{eq:penalised_cost}) is non-trivial as it involves minimising a non-convex function. Furthermore, standard dynamic programming algorithms for change points \citep{maidstone2017optimal}, e.g., those that recurse based on conditioning on the location of the most recent changepoint,  cannot be used because of the dependence across changepoints due to the continuity constraint. Thus we follow \cite{fearnhead2019detecting} and develop a dynamic programming recursion that conditions both on the location of the changepoints and the value of the mean at that changepoint.
 
-Remember that we are allowing changepoints only at grid-points, $g_{1:N}$. We introduce a set of functions, each associated with a grid-point, $F_t(\alpha)$ for $t=1,\ldots,N$, defined as the minimum value of the penalised cost for data up to and including grid-point $g_t$ conditional on the signal at $g_t$ being $\alpha$, i.e. $f(g_t)=\alpha$. To define this formally, define a set of segment cost functions
+Remember that we are allowing changepoints only at grid-points, $g_{1:N}$. We introduce a set of functions, each associated with a grid-point, $F_t(\alpha)$ for $t=1,\ldots,N$, defined as the minimum value of the penalised cost for data up to and including grid-point $g_t$ conditional on the signal at $g_t$ being $\alpha$, i.e., $f(g_t)=\alpha$. To define this formally, define a set of segment cost functions
 \[
 \mathcal{C}_{s,t}(\alpha',\alpha) = \sum_{i=n_s+1}^{n_t} \left(y_i -\alpha' - (\alpha-\alpha')\frac{x_i-g_s}{g_t-g_s} \right)^2,
 \]
-which is the cost of fitting a linear signal to data points between the $s$th and $t$th grid-points, i.e. $(x_i,y_i)$ with $g_s<x_i\leq g_t$, with the signal taking the value $\alpha'$ at $g_s$ and $\alpha$ at $g_t$. In the summation we use the notation $n_s$ to denote the index of the last data-point located at or before $g_s$. If $n_t=n_s$, that is there are no data-points between $g_s$ and $g_t$ then this cost is set to 0.
+which is the cost of fitting a linear signal to data points between the $s$th and $t$th grid-points, i.e., $(x_i,y_i)$ with $g_s<x_i\leq g_t$, with the signal taking the value $\alpha'$ at $g_s$ and $\alpha$ at $g_t$. In the summation we use the notation $n_s$ to denote the index of the last data-point located at or before $g_s$. If $n_t=n_s$, that is there are no data-points between $g_s$ and $g_t$ then this cost is set to 0.
 
 Using this definition, the $L_0$ penalised criteria (\ref{eq:penalised_cost}) can be written as
 \begin{equation} \label{eq:penalisedcost2}
@@ -176,11 +178,11 @@ The novelty relative to \cite{fearnhead2019detecting} is that for this recursion
 One further extension of this approach to detecting changes is to allow for a minimum segment length. This can be done by optimising the penalised cost (\ref{eq:penalised_cost}) only over sets of changepoints that are consistent with the prescribed minimum segment length. To minimise the cost subject to such a constraint involves adapting the dynamic programming recursion so that we only search over values of $k$ for the location of the most recent changepoint that are consistent with the minimum segment length. However one drawback with imposing a minimum segment length for the change-in-slope problem is that it makes the PELT pruning ideas invalid. In our implementation of \code{cpop}, if a minimum segment length is specified we allow the algorithm to be run both with and without the PELT pruning. If run without PELT pruning, the algorithm will be slower but guaranteed to find the optimal segmentation under our condition. Running with PELT pruning is quicker but the algorithm may output a slightly sub-optimal segmentation. In practice we have observed that this happens rarely. %, and we investigate this empirically in Section \ref{}.
 
 
-\section{The {cpop} Package} \label{sec:cpop}
+\section[The cpop package]{The \pkg{cpop} package} \label{sec:cpop}
 
 The \pkg{cpop} package has functions to simulate data from a change-in-slope model, implement the CPOP algorithm to estimate the location of the changes, and various functions for summarising and plotting the estimates of the change locations and the mean function. 
 
-\subsection{Generating Simulated Data}
+\subsection{Generating simulated data}
 %
 %
 The \code{simchangeslope} function allows for simulating data from a change-in-slope model (\ref{eq:cinslope}): %. It takes as input the $x$-values of the data points, the locations of the changes, how much the slop of the mean changes at each changepoint, and the standard deviation of the noise:
@@ -236,15 +238,16 @@ R> print(p)
 \end{figure}
 %
 %
-\subsection{Determining Changes in Slope}
+\subsection{Determining changes in slope}
 %
 %
 The function \code{cpop} is used to determine the locations of changes in slope.
 %
 %
 \begin{CodeInput}
-cpop(y, x = 1:length(y) - 1, grid = x, beta = 2 * log(length(y)), 
-    sd = 1, minseglen = 0, prune.approx = FALSE)
+cpop(y, x = 1:length(y) - 1, grid = x, beta = 2*log(length(y)), 
+    sd =  sqrt(mean(diff(diff(y))^2)/6), minseglen = 0, 
+    prune.approx = FALSE)
 \end{CodeInput}
 It takes the following arguments :
 %
@@ -253,9 +256,9 @@ It takes the following arguments :
  \item  \code{y} - A vector of length $n$ containing the data.
 \item \code{x} -  A vector of length $n$ containing the times/locations of data points. Default value is NULL, in which case the locations are set to be $0,1,\ldots,n-1$, corresponding to evenly spaced data.
 \item \code{grid} -  An ordered vector of possible locations for the change points. If this is NULL, then this is set to $x$, the vector of times/locations of the data points.
-\item \code{beta} -  A positive real value for the penalty, $\beta$ in (\ref{eq:penalisedcost2}), incurred for adding a changepoint. The larger the penalty, the fewer changepoints will be detected.
-\item \code{sd} - Estimate of residual standard deviation. Can be a single numerical value if it is the same for all data points, or a vector of $n$ values for the case of varying standard deviation. 
-\item \code{minseglen} -  The minimum allowable segment length, i.e. distance between successive changepoints. The default is that no minimum segment length is imposed.
+\item \code{beta} -  A positive real value for the penalty, $\beta$ in (\ref{eq:penalisedcost2}), incurred for adding a changepoint. The larger the penalty, the fewer changepoints will be detected. The default value is \code{beta = 2*log(length(y))}.
+\item \code{sd} - Estimate of residual standard deviation. Can be a single numerical value if it is the same for all data points, or a vector of $n$ values for the case of varying standard deviation. The default value is \code{sd = sqrt(mean(diff(diff(y))**2)/6)}.
+\item \code{minseglen} -  The minimum allowable segment length, that is the distance between successive changepoints. The default is that no minimum segment length is imposed.
 \item \code{prune.approx} -  Only relevant if a minimum segment length is set. If True, \code{cpop} will use an approximate pruning algorithm that will speed up computation but may occasionally lead to a sub-optimal solution in terms of the estimated changepoint locations. If the minimum segment length is 0, then an exact pruning algorithm is possible and is used.
 \end{itemize}
 The \code{cpop} function returns an S4 object for which a number of generic methods, including \code{plot} and \code{summary}, are provided. 
@@ -267,7 +270,7 @@ The following demonstrates how the \code{cpop} function can be used to determine
 %
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res <- cpop(y, x, sd = 0.8)
+R> res <- cpop(y, x, beta = 2*log(length(y)), sd = 0.8)
 R> summary(res)
 \end{CodeInput}
 \begin{CodeOutput}
@@ -302,6 +305,8 @@ R> print(p)
 \end{CodeChunk}
 The last two lines of code add the true changepoint locations and the true mean function to the plot. For plotting the changepoint location we omit the first element of \code{changepoints}, which was 0, as that was included just to set the initial slope of the mean and does not correspond to a change-in-slope.
 
+The estimate of the number of changes will depend on both the value of the penalty, \code{beta}, and the assumed standard deviation of the noise, \code{sd}. By considering the form of the criteria (\ref{eq:penalised_cost}) that \code{cpop} minimises we see that if we multiply \code{sd} by some constant $c$ and \code{beta} by $c^2$ then we will obtain the same set of estimated changes. The function \code{cpop} has default values, with \code{sd} estimated based on the second moment of the second differences of the data (as second differences removes a linear signal), and \code{beta} set to $2\log n$, where $n$ is the length of the data. This is a standard default penalty which has good properties if the noise is independent, identically distributed and Gaussian, and \code{sd} is a good estimate of the noise standard deviation. How to use \code{cpop} when these assumptions do not hold, or the noise standard deviation varies or is hard to estimate is discussed in the examples below.
+ 
 \begin{figure}
 \centering
 %\includegraphics[scale=1.0]{figures/cpop-example1.pdf}
@@ -311,13 +316,14 @@ The last two lines of code add the true changepoint locations and the true mean 
 \end{figure}
 %
 %
-\subsection{Other Functions}
+\subsection{Other functions}
 %
 %
-In addition to \code{plot} and \code{summary}, the \pkg{cpop} package provides functions to evaluate the fitted mean function at specified $x$-values, and to calculate the residuals of the fitted mean. The primary argument of these functions is \code{object} - An instance of a cpop S4 class as produced by the function \code{cpop}.
+In addition to \code{plot} and \code{summary}, the \pkg{cpop} package provides functions to evaluate the fitted mean function at specified $x$-values, and to calculate the residuals of the fitted mean. The primary argument of these functions is \code{object}, an instance of a cpop S4 class as produced by the function \code{cpop}.
 
 The function \code{changepoints(object)}
 creates a data frame containing the locations of the changepoints in terms of the their $x$-values.
+%\newpage
 \begin{CodeChunk}
 \begin{CodeInput}
 R> changepoints(res)
@@ -348,7 +354,7 @@ The function \code{estimate(object, x = object@x, ...)} with argument,
 %\subsubsection{example}
 \begin{CodeChunk}
 \begin{CodeInput}
-R> estimate(res, x = c(0.1,2.7,51.6))
+R> estimate(res, x = c(0.1 ,2.7 ,51.6))
 \end{CodeInput}
 \begin{CodeOutput}
    x     y_hat
@@ -377,6 +383,7 @@ R> fitted(res)
 %
 %
 Finally, the function \code{residuals(object)}  creates a single column matrix containing the residuals.
+\newpage
 %\subsubsection{example}
 \begin{CodeChunk}
 \begin{CodeInput}
@@ -395,9 +402,9 @@ R> head(residuals(res))
  %
  %
 
-\section{Extensions of {cpop}} \label{sec:extensions}
+\section[Extensions of {cpop}]{Extensions of \pkg{cpop}} \label{sec:extensions}
 
-\subsection{Irregularly Sampled Data}
+\subsection{Irregularly sampled data}
 
 The \pkg{cpop} package allows for irregularly spaced data, both when simulating data and when running the CPOP algorithm. The only change to the previous code that we need to make is to change the definition of \code{x} that is input to \code{simchangeslope}.
 
@@ -414,7 +421,7 @@ R> y <- simchangeslope(x, changepoints, change.slope, sd)
 To analyse the data we use \code{cpop} as before. (The only difference is that for evenly spaced data one can omit the \code{x} argument -- but it must be included for unevenly spaced data.)
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res <- cpop(y, x, sd = 0.8)
+R> res <- cpop(y, x, beta = 2*log(length(y)), sd = 0.8)
 \end{CodeInput}
 \end{CodeChunk}
 %
@@ -430,14 +437,14 @@ Figure \ref{fig:cpop-example-uneven} shows a plot of the simulated data and esti
 \end{figure}
 %
 %
-\subsection{Heterogeneous Data}
+\subsection{Heterogeneous data}
 
 To simulate heterogeneous data we just input a vector of the standard deviation of each data point. For example, we can produce a version of the simulation from Section \ref{sec:cpop} but with the noise standard deviation increasing with $x$.
 
 \begin{CodeChunk}
 \begin{CodeInput}
 R> x <- 1:200
-R> sd <- x / 100
+R> sd <- x/100
 R> y <- simchangeslope(x, changepoints, change.slope, sd))
 \end{CodeInput}
 \end{CodeChunk}
@@ -448,8 +455,8 @@ Here the values of \code{changepoints} and \code{change.slope} are as before.
 It is interesting to compare two estimates of the changepoints, one where we assume a fixed noise standard deviation, and one where we assume the true noise standard deviation. For the former it is natural to set this value so the the average variance of the noise is correct. 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res <- cpop(y, x, sd = sqrt(mean(sd^2)))
-R> res.true <- cpop(y, x, sd = sd)
+R> res <- cpop(y, x, beta = 2*log(length(y)), sd = sqrt(mean(sd^2)))
+R> res.true <- cpop(y, x, beta = 2*log(length(y)), sd = sd)
 \end{CodeInput}
 \end{CodeChunk}
 Here \code{res} contains the results where we assume a fixed noise standard deviation, and \code{res.true} where we use the true values. Figure \ref{fig:cpop-example-heterogeneous} shows the results -- and we can see that wrongly assuming homogeneous noise leads to detecting two false positive changepoints in regions where the noise variance is above what was assumed. 
@@ -479,7 +486,7 @@ Here \code{res} contains the results where we assume a fixed noise standard devi
 One practical issue is how can we estimate the noise variance in the heterogeneous case? In some situations there may be covariate information that tells the relative variance of the noise for different data points (for example due to some data being averages of multiple measurements). Alternatively if we know how the noise variance depends on $x$ we can estimate this by (i) running CPOP assuming a constant variance; (ii) calculating the residuals of the fitted model; (iii) estimating how the noise variance varies with $x$ by fitting an appropriate model to the residuals. An example of this scheme will be seen in Section \ref{sec:app}. 
 
 
-\subsection{Choice of Grid}
+\subsection{Choice of grid}
 
 The computational cost for \code{cpop} increases with the size of the number of potential changepoint locations. To see the rate of increase we ran \code{cpop} with the default settings where the grid of potential changepoints is equal to the $x$ values of the data, for data sizes varying from $n=200$ to $n=6400$. We considered two scenarios, one where we had a fixed number of changepoints and one where we had a fixed segment size of length 100. The average CPU cost across 10 runs of \code{cpop} for each data size are shown in Figure \ref{fig:cpop-CPU}. The suggest that the computational cost is increasing like $n^{2.5}$ when we have a fixed number of changes, and like $n^{1.7}$ when the number of changes increases linearly with $n$. By comparison, if we analyse each data set with a grid of 200 evenly spaced potential locations for the changes, the computational cost is roughly constant.
 
@@ -494,18 +501,19 @@ The computational cost for \code{cpop} increases with the size of the number of 
 Thus for large data sets, we can substantially reduce the computational cost of running \code{cpop} by using a smaller grid of potential change locations. Obviously this comes with the drawback of a potential loss of accuracy with regards to the estimated changepoint locations. However one possible approach is to run \code{cpop} with a coarse grid, and then re-run the algorithm with a finer grid around the estimated changepoints.
 
 To see this we implemented the scheme for a data set with $n=6400$ and a fixed segment size of 200.  We initially ran \code{cpop} with a grid with potential changes allowed every 16 observations.
+%\newpage
 \begin{CodeChunk}
 \begin{CodeInput}
 R> x <- 1:6400
 R> y <- simchangeslope(x, changepoints = 0:31*200, 
-+ change.slope = c(0.05,0.1*(-1)^(1:(31))), sigma = 1)
++ change.slope = c(0.05, 0.1*(-1)^(1:(31))), sigma = 1)
 \end{CodeInput}
 \end{CodeChunk}
 
 We use a smaller value for the penalty due to the smaller grid size, and the fact that this is a preliminary step to find roughly where the changes are: so the key is to avoid missing changes. Spurious changes can still be removed when we perform our final run of \code{cpop}. 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res.coarse <- cpop(y, x, grid=1:399*16, beta = 2 * log(400))
+R> res.coarse <- cpop(y, x, grid = 1:399*16, beta = 2*log(400), sd = 1)
 \end{CodeInput}
 \end{CodeChunk}
 
@@ -513,20 +521,17 @@ In our example we find 38 changepoints with this coarse grid. We then introduce 
 \begin{CodeChunk}
 \begin{CodeInput}
 R> cps <- unlist(changepoints(res.coarse))
-
 R> grid <- NULL
-R> for(i in 1:length(cps))
-R> {
-R>   grid <- c(grid, cps[i] + (-7):8)
-R> }
-
-R> res.fine <- cpop(y, x, grid, beta = 2 * log(length(x)))
+R> for(i in 1:length(cps)) {
++   grid <- c(grid, cps[i]+(-7):8)
++ }
+R> res.fine <- cpop(y, x, grid, beta = 2*log(length(x)), sd = 1)
 \end{CodeInput}
 \end{CodeChunk}
 
 This gives a computational saving of between 10 to 100 over the default running of \code{cpop}. We can evaluate the accuracy of the approach by then comparing the estimated changepoints to the estimates we obtain if we run the default setting of \code{cpop}. In this case, both runs estimate the same number of changepoints, with the maximum difference in the location of a change being two time-points. The slower, default running of \code{cpop} gives a segmentation with a marginally lower cost (of 7187.1 as opposed to 7188.0).
 
-\subsection{Imposing a Minimum Segment Length}
+\subsection{Imposing a minimum segment length}
 
 The \code{cpop} function allows the user to specify a minimum segment length -- and this is defined as the minimum $x$-distance allowed between two estimated changepoints. Specifying a minimum segment length can make the method more robust to point outliers or noise that is heavier-tailed than Gaussian: as minimising (\ref{eq:penalised_cost}) can lead to over-fitting in such scenarios and this over-fitting tends to be through adding clusters of changepoints close together to fit the noise in the data. There are two disadvantages of imposing a minimum segment length. First it can cause true changes to be missed if they are closer together than the specified minimum segment length. Second \code{cpop} is slower when a minimum segment length is imposed.
 
@@ -538,7 +543,6 @@ R> changepoints <- c(0, 25, 50, 100)
 R> change.slope <- c(0.2, -0.3, 0.2, -0.1)
 R> x <- 1:200
 R> mu <- simchangeslope(x, changepoints, change.slope, sigma = 0)
-
 R> y <- mu + rt(length(x), df = 4)
 \end{CodeInput}
 \end{CodeChunk}
@@ -546,8 +550,8 @@ R> y <- mu + rt(length(x), df = 4)
 We then estimated the changepoint locations both without a minimum segment length, and with minimum segment lengths of 10, 30 and 40. To run \code{cpop} with a minimum segment length of 10:
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res.min <- cpop( y, x, beta = 2*( log( length(y) ) ),
-  +. minseglen = 10, sd = sqrt(2) )
+R> res.min <- cpop(y, x, beta = 2*log(length(y)),
++  minseglen = 10, sd = sqrt(2) )
 \end{CodeInput}
 \end{CodeChunk}
 The argument \code{sd = sqrt(2)} is because $t_4$ distributed noise has a variance of 2.
@@ -589,30 +593,31 @@ Results from CPOP with different minimum segment lengths are shown in Figure \re
 
 Assuming a minimum segment length of 30 or 40 shows what can happen when our minimum segment length assumption does not hold. A minimum segment length of 30 leads to estimates of the first two changes at time-points 30 and 60 -- the closest possible given the assumption. As we increase the minimum segment length to 40 we miss the first changepoint all together. 
 
-\subsection{Choice of Penalty}
+\subsection{Choice of penalty}
 
 The choice of the penalty, \code{beta}, in \code{cpop} can have a substantial impact on the number of changepoints detected and the accuracy of the estimated mean function. This is common to all changepoint methods, where there will be at least one tuning parameter that specifies the evidence for a change that is needed before a change is added. The default choice of penalty, $2\log n$ where $n$ is the data size, is based on assumptions that the noise is IID Gaussian with known variance. When these assumptions do not hold, it is recommended to look at the segmentations obtained as the penalty value is varied: this can be done efficiently using the CROPS algorithm of \cite{haynes2017computationally}. 
 
 The idea of CROPS is that it allows a penalised cost method to be implemented for all penalty values in an interval. This is implemented within the \pkg{cpop} package by the function:
 \begin{CodeInput}
-cpop.crops(y, x = 1:length(y), grid = x, beta_min = 1.5 * log(length(y)),
-  beta_max = 2.5 * log(length(y)), sd = 1, minseglen = 0, prune.approx = FALSE)
+cpop.crops(y, x = 1:length(y), grid = x, beta_min = 1.5*log(length(y)),
+  beta_max = 2.5*log(length(y)), sd =  sqrt(mean(diff(diff(y))^2)/6), 
+  minseglen = 0, prune.approx = FALSE)
 \end{CodeInput}
 The arguments of \code{cpop.crops} are identical to those of \code{cpop} except that, rather than specifying a single penalty value (\code{beta}), the range of penalty values to be used is specified by \code{beta_min} and \code{beta_max}, which fix the smallest and largest penalty value to be used. The output is an instance of an S4 class that contains details of all segmentations found by minimising the penalised cost for some penalty value in the interval between \code{beta_min} and \code{beta_max}.
 
 To see the use of \code{cpop.crops}, consider an application where we do not know the standard deviation of the noise. Under our criteria (\ref{eq:penalised_cost}), the optimal segmentation with penalty $c^2 \beta$ and standard deviation $\sigma_i/c$ will be the same if we fix $\beta$ and $\sigma_{1:n}$ but vary $c>0$. Thus under an assumption that the noise is homogeneous, we can run \code{cpop} with \code{sd = 1} but for a range of $\beta \in [2\sigma_{-}^2\log n,2\sigma_{+}^2\log n]$, and this will give us the optimal segmentations for $\beta=2 \log n$ as we vary noise standard deviation between $\sigma_{-}$ and $\sigma_{+}$.
 
-We simulated data as per Section \ref{sec:cpop} but with \code{sd = 1.5}. To run CPOP for a range of $\beta\in[7.5, 50]$ we use
+We simulated data as per Section \ref{sec:cpop} but with \code{sd = 1.5}. To run CPOP for a range of $\beta\in[5, 50]$ we use
 \begin{CodeInput}
-R> res.crops <- cpop.crops(y, x, beta_min = 5, beta_max = 50)
+R> res.crops <- cpop.crops(y, x, beta_min = 5, beta_max = 50, sd = 1)
 \end{CodeInput}
-For our example $2 \log n = 10.6$, so this is equivalent to trying noise standard deviation in the range $[0.8,2.2]$. 
+For our example $2 \log n = 10.6$, so this is equivalent to trying noise standard deviation in the range $[0.69,2.2]$. 
 
-We can plot the location in the changepoints for each segmentation found by CPOP for $\beta\in[7.5,50]$
+We can plot the location in the changepoints for each segmentation found by CPOP for $\beta\in[5,50]$
 \begin{CodeInput}
 R> plot(res.crops)
 \end{CodeInput}
-This is shown in Figure \ref{fig:crops.cpopA}, and shows that there are 6 different segmentations found. These are labelled with a penalty value which gives that segmentation (left axis) and the unpenalised cost, i.e. the weighted RSS, for that segmentation and penalty value (right axis).
+This is shown in Figure \ref{fig:crops.cpopA}, and shows that there are 6 different segmentations found. These are labelled with a penalty value which gives that segmentation (left axis) and the unpenalised cost, i.e., the weighted RSS, for that segmentation and penalty value (right axis).
 
 Details of the segmentations can be obtained using \code{segmentations(res.crops) }. This gives a matrix with one row for each of the segmentations, and each row contains a value of $\beta$ that gives that segmentation, the corresponding unpenalised cost, the penalised cost, the number of changepoints, and then the list of ordered changepoints. 
 %
@@ -630,11 +635,9 @@ R> M <- length(models)
 R> BIC <- rep(NA, M)
 R> ncps <- segmentations(res.crops )[,4]
 R> n <- length(y)
-R> for(j in 1:M)
-R> {
-R>   BIC[i] <- n * log(mean((residuals(models[[j]]))^2)) 
-+    + 2 * ncps[i] * log(n)
-R> }
+R> for(j in 1:M) {
++   BIC[i] <- n*log(mean((residuals(models[[j]]))^2)) + 2*ncps[i]*log(n)
++ }
 \end{CodeInput}
 \end{CodeChunk}
 This uses that the fourth column of the matrix \code{segmentations( res.crops )} stores the number of changepoints in each segmentation, and that we can calculate $y_i - \hat{f}(x_i)$ using the \code{residual} function evaluated for the corresponding entry of \code{cpop.crops.models(res.crops)}. The segmentation which has the smallest value of \code{BIC} is shown in Figure \ref{fig:crops.cpopA}, and shows that this correctly chooses the segmentation with three changes.
@@ -671,9 +674,9 @@ We simulated data with $n=500$ data points and $10$ equally spaced changepoints.
 R> n <- 500
 R> x <- 1:n
 R> mu <- simchangeslope(x, changepoints = 45*0:10, 
-+  change.slope = c(0.15,0.3*(-1)^(1:10)), sd = 0)
++  change.slope = c(0.15, 0.3*(-1)^(1:10)), sd = 0)
 R> epsilon <- rnorm(n+2)
-R> y <- mu + (epsilon[1:n] + epsilon[2:(n+1)] + epsilon[3:(n+2)]) / sqrt(3)
+R> y <- mu + (epsilon[1:n] + epsilon[2:(n+1)] + epsilon[3:(n+2)])/sqrt(3)
 \end{CodeInput}
 \end{CodeChunk}
 The noise is MA(3), and we simulate the data by first calculating the mean function, \code{mu}, and then adding the MA(3) noise.
@@ -682,7 +685,7 @@ We could continue as above, and choose between the segmentations by minimising a
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> res.crops <- cpop.crops(y, x, beta_min = 8, beta_max = 200)
+R> res.crops <- cpop.crops(y, x, beta_min = 8, beta_max = 200, sd = 1)
 R> segs <- segmentations(res.crops)
 R> p <- ggplot(data = segs, aes(x = m))
 R> p <- p + geom_line(aes(y = Qm))
@@ -730,12 +733,10 @@ Interest lies in estimating the rate of decay of the log-spectra against log-wav
 R> data("wavenumber_spectra")
 R> x <- log(wavenumber_spectra[-(1:3),1])
 R> y <- log(wavenumber_spectra[-(1:3),4])
-
 R> grid <- seq(from = min(x), to = max(x), length = 200)
-
-R> sig2 <- mean( diff( diff(y) )^2 )/6 
-
-R> res <- cpop(y, x, grid, sd = sqrt(sig2), minseg = 0.2, beta = 2*log(200))
+R> sig2 <- mean(diff(diff(y))^2)/6 
+R> res <- cpop(y, x, grid, sd = sqrt(sig2), 
++              minseglen = 0.09, beta = 2*log(200))
 \end{CodeInput}
 \end{CodeChunk}
 Here we estimate the noise variance, \code{sig2}, based on the variance of the double difference of the data. For regions where the mean is linear and the data is evenly spaced, taking the double difference will lead to a mean zero process. If the noise is IID with variance $\sigma^2$ then the double-differenced process will have a marginal variance that is $6\sigma^2$. Thus our estimate is the empirical mean of the square of the double-difference data divided by 6. The original data is evenly spaced in in terms of wavenumber, but as we take logs, \code{x} is unevenly spaced: so this estimator will be biased in our setting. However it will give a reasonable ball-park figure for an initial run of \code{cpop} -- the residuals from which can then be used to get a better estimate of the noise variance. We use a evenly spaced grid for possible change-point locations. To avoid the potential for adding multiple changepoints between two observations, we set a minimum segment length of 0.09 (as the largest distance between consecutive \code{x} values is 0.08).
@@ -750,18 +751,18 @@ Here we estimate the noise variance, \code{sig2}, based on the variance of the d
 
 
 The output is shown in the top-right plot of Figure \ref{fig:crops.data}, and appears to be over-fitting to the early part of the series. This is because the noise variance is heterogeneous, and decreasing with \code{x}. However, given our initial fit we can use the residuals to estimate the noise variance. The noise for the spectra is expected to be approximately inversely proportional to the wavenumber. By using a Taylor-expansion, we have the variance of the noise for the log-spectra should be approximately the variance of the noise of the spectra divided by the square of the mean of the spectra. As the mean of the spectra is roughly a power of the wavenumber, this suggests using a model for the variance, $\sigma^2_x$ say, depending on $x$ as $\log \sigma^2_x = a + bx$: so that the variance is proportional to some power of the wavenumber. We can estimate the parameters of this model by maximising the log-likelihood of Gaussian model for the residuals with this form for the variance.
+\newpage
 \begin{CodeChunk}
 \begin{CodeInput}
 R> r2 <- residuals(res)^2
-R> loglik <- function(par)
-R> { 
-R>  return(length(r2) * par[1] + par[2] * sum(x) 
-  + sum(r2 / (exp(par[1]+par[2]*x))))
-R> }
+R> loglik <- function(par) { 
++  return(length(r2)*par[1] + par[2]*sum(x) + 
++          sum(r2/(exp(par[1]+par[2]*x))))
++ }
 R> est.hat <- optim(c(0,0), loglik)
 R> sig2 <- exp(est.hat$par[1] + est.hat$par[2]*x)
 R> res2 <- cpop(y, x, grid, sd = sqrt(sig2), 
-+               minseg = 0.2, beta =2 * log(200))
++               minseglen = 0.09, beta = 2*log(200))
 \end{CodeInput}
 \end{CodeChunk}
 Here we have calculated the maximum likelihood estimates by using \code{optim} to minimise minus the log-likelihood. The resulting output from \code{cpop} is shown in the bottom left plot of Figure \ref{fig:crops.data}.  The first two changes could represent real regime transitions relating to the inviscid fluid physics that one would see in the real ocean \cite[see Figure 6a of][]{callies2013interpreting}, while the three changes for the largest values of \code{x} may relate to a breakdown in the numerical ocean model near the highest wavenumber of the ocean model grid \cite[]{soufflet2016effective}. The estimates of the spectra for all four series, obtained by repeating this approach, is also shown in Figure \ref{fig:crops.data}. For this application, the residuals from the fitted model appear to be uncorrelated and sub-Gaussian, so using the fit based on the default penalty choice is reasonable. Though one could also explore segmentations for other penalty choices using \code{cpop.crops} as in the previous section.
@@ -776,7 +777,7 @@ We would like to thanks Jessica Luo and Dan Whitt for access to and help with th
 
 \appendix
 
-\section{Details of the Recursion} \label{App:cost_update}
+\section{Details of the recursion} \label{App:cost_update}
 
 Here we describe how to calculate the inner minimisation
 \[

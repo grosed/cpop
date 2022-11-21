@@ -1,5 +1,10 @@
 #  **News**
 
+
+## cpop 1.0.6
+
+- Updated vignettes to be consistent with article submitted to the Journal of Statistical Software.
+
 ## cpop 1.0.5
 
 - Use message to return messages instead of cat.
