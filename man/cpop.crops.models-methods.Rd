@@ -40,6 +40,8 @@ for(m in models)
 \insertRef{crops-article}{cpop}
 
 \insertRef{crops-package}{cpop}
+
+\insertRef{cpop-jss-article-2024}{cpop}
 }
 \seealso{
 \code{\link{cpop.crops}},\code{\link[crops]{crops}}

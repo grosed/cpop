@@ -26,7 +26,8 @@ cpop.class<-function(y,x,beta,sd,changepoints)
 #'
 #' @return Numerical value of the penalised cost associated with the segmentations determined by using \code{\link{cpop}}   
 #'
-
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @examples
 #' library(cpop)
 #'
@@ -98,6 +99,8 @@ setMethod("cost",signature=list("cpop.class"),
 #'                     linetype="dashed")
 #' print(p)
 #'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 simchangeslope<-function(x,changepoints,change.slope,sd=1)
 {
@@ -140,6 +143,8 @@ simchangeslope<-function(x,changepoints,change.slope,sd=1)
 #'
 #' # visualise
 #' print(p)
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
 #'
 #' @rdname plot-methods
 #'
@@ -202,6 +207,9 @@ setMethod("plot",signature=list("cpop.class"),function(x)
 #'
 #' # display a summary of the results
 #' summary(res)
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 setMethod("summary",signature=list("cpop.class"),function(object)
 {
@@ -268,6 +276,8 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #' # display a summary of the results using show
 #' show(res)
 #'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
 setMethod("show",signature=list("cpop.class"),function(object)
@@ -308,7 +318,9 @@ setMethod("show",signature=list("cpop.class"),function(object)
 #'
 #' # calculate segments
 #' fitted(res)
-
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 # if(!isGeneric("fitted")) {setGeneric("fitted",function(object) {standardGeneric("fitted")})}
 setMethod("fitted",signature=list("cpop.class"),
@@ -362,6 +374,8 @@ setMethod("fitted",signature=list("cpop.class"),
 #' # use the locations in x
 #' res <- cpop(y,x,beta=2*log(length(y)),sd=sd)
 #' changepoints(res)
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
 #'
 #' @export
 if(!isGeneric("changepoints")) {setGeneric("changepoints",function(object) {standardGeneric("changepoints")})}
@@ -427,6 +441,7 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @rdname cpop
 #'
 #' @references \insertRef{doi:10.1080/10618600.2018.1512868}{cpop}
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
 #'
 #' @examples
 #' library(cpop)
@@ -573,7 +588,9 @@ estimate.util <- function(object,x)
 #' 
 #' #extrapolate fit
 #' estimate(res,seq(-20,140,20))
-#' 
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 if(!isGeneric("estimate")) {setGeneric("estimate",function(object,x=object@x,...) {standardGeneric("estimate")})}
 setMethod("estimate",signature=list("cpop.class"),
@@ -623,6 +640,8 @@ setMethod("estimate",signature=list("cpop.class"),
 #' residuals(res)
 #'
 #' @aliases residuals,cpop.class-method
+#'
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
 #'
 #' @export
 setMethod("residuals",signature=list("cpop.class"),

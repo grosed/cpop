@@ -70,4 +70,6 @@ plot(res)
 \insertRef{crops-article}{cpop}
 
 \insertRef{crops-package}{cpop}
+
+\insertRef{cpop-jss-article-2024}{cpop}
 }

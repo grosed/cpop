@@ -1,0 +1,11 @@
+bibentry(bibtype = "Article",
+title = "{cpop}: Detecting Changes in Piecewise-Linear Signals",
+author = c(person(given = "Paul",family = "Fearnhead",email = "p.fearnhead@lancaster.ac.uk"), person(given = "Daniel",family = "Grose",email = "dan.grose@lancaster.ac.uk")),
+journal = "Journal of Statistical Software",
+year = "2024",
+volume = "109",
+number = "7",
+pages = "1--30",
+doi = "10.18637/jss.v109.i07",
+header = "To cite cpop in publications use:"
+)

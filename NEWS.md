@@ -1,5 +1,12 @@
 #  **News**
 
+## cpop 1.0.7
+
+- Added CITATION file
+- Removed vinettes. Please refer to doi:10.18637/jss.v109.i07 instead.
+- Removed Makevars and Makevar.win (assume the user has c++ >= 14 available)
+- Added reference to doi:10.18637/jss.v109.i07 in documentation
+
 
 ## cpop 1.0.6
 

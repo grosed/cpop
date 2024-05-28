@@ -26,3 +26,6 @@ res <- cpop(y,x,beta=2*log(length(y)))
 show(res)
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}

@@ -39,3 +39,6 @@ estimate(res,seq(0,100,10))
 estimate(res,seq(-20,140,20))
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}

@@ -55,6 +55,8 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' @references \insertRef{crops-article}{cpop}
 #' @references \insertRef{crops-package}{cpop}
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y)),
                      beta_max = 2.5 * log(length(y)),sd = sqrt(mean(diff(diff(y))^2)/6),
@@ -130,6 +132,8 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #'
 #' @references \insertRef{crops-article}{cpop}
 #' @references \insertRef{crops-package}{cpop}
+#' @references \insertRef{cpop-jss-article-2024}{cpop}
+#'
 #' @export
 setGeneric("cpop.crops.models",function(object) {standardGeneric("cpop.crops.models")})
 setMethod("cpop.crops.models",signature=list("cpop.crops.class"),

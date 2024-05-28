@@ -106,4 +106,6 @@ print(p)
 }
 \references{
 \insertRef{doi:10.1080/10618600.2018.1512868}{cpop}
+
+\insertRef{cpop-jss-article-2024}{cpop}
 }

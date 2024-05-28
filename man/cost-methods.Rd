@@ -28,3 +28,6 @@ res <- cpop(y,x,beta=2*log(length(y)))
 cost(res)
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}

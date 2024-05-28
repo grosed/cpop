@@ -53,3 +53,6 @@ p <- p + geom_vline(xintercept=changepoints,
 print(p)
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}

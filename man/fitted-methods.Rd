@@ -32,4 +32,8 @@ res <- cpop(y,x,beta=2*log(length(y)))
 
 # calculate segments
 fitted(res)
+
+}
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
 }

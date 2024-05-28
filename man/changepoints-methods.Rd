@@ -30,3 +30,6 @@ res <- cpop(y,x,beta=2*log(length(y)),sd=sd)
 changepoints(res)
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}

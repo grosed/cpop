@@ -35,3 +35,6 @@ p <- plot(res)
 print(p)
 
 }
+\references{
+\insertRef{cpop-jss-article-2024}{cpop}
+}
