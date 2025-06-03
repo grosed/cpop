@@ -497,6 +497,8 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(
     if(is.null(sd))
     {
       sd <- sqrt(mean(diff(diff(y))^2)/6)
+      epsilon <- 1e-10
+      sd <- max (epsilon, sd)
     }
     if(length(sd)!=length(y))
     {

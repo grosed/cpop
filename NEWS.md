@@ -1,5 +1,10 @@
 #  **News**
 
+
+## cpop 1.0.8
+
+- Added code to ensure variance >= epsilon = 1e-10. Many thanks to Piotr Fryzlewicz for raising this issue.
+
 ## cpop 1.0.7
 
 - Added CITATION file
