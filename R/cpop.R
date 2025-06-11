@@ -499,7 +499,13 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(
       sd <- sqrt(mean(diff(diff(y))^2)/6)
     }
     epsilon <- 1e-6
-    Map(function(.) max(.,epsilon),sd) |> unlist() -> sd
+    Map(function(.) max(.,epsilon),sd) |> unlist() -> sd_checked
+    if(FALSE %in% (sd == sd_checked))
+    {
+       message("setting minumum value of sd to 1e-6")
+    }
+
+
     if(length(sd)!=length(y))
     {
       message("Length of sd and y differ. Applying first value of sd to all values of y.")
