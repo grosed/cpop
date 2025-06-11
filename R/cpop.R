@@ -504,8 +504,7 @@ cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(
     {
        message("setting minumum value of sd to 1e-6")
     }
-
-
+    sd <- sd_checked
     if(length(sd)!=length(y))
     {
       message("Length of sd and y differ. Applying first value of sd to all values of y.")
