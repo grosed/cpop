@@ -413,17 +413,17 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @return An instance of an S4 class of type cpop.class.
 #'
 #' @details \loadmathjax{} The CPOP algorithm fits a change-in-slope model to data. It assumes that we have we have data points \mjeqn{(y_1,x_1),\ldots,(y_n,x_n)}{(y_1,x_1),...,(y_n,x_n)}, ordered
-#' so that \mjeqn{x_1 < x_2 < \cdots < x_n}{x_1 < x_2 < ... < x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
+#' so that \mjteqn{x_1 < x_2 < ... < x_n}{x_1 \lt x_2 \lt ... \lt x_n}{x_1 < x_2 < ... < x_n}. For example  \mjeqn{x_i}{x_i} could be a time-stamp of when response \mjeqn{y_i}{y_i} is obtained. We model the response, \mjeqn{y}{y}, as a signal
 #' plus noise where the signal is modelled as a continuous piecewise linear function of \mjeqn{x}{x}. That is \mjdeqn{y_i=f(x_i)+\epsilon_i}{y_i=f(x_i)+e_i} where \mjeqn{f(x)}{f(x)} is a continuous
 #' piecewise linear function.
 #'
-#' To estimate the function \mjeqn{f(x)}{f(x)} we specify a set of \mjeqn{N}{N} grid points, \mjeqn{g_{1:N}}{g_{1:N}} with these ordered so that \mjeqn{g_i < g_j}{g_i < g_j} if and only if \mjeqn{i < j}{i < j},
+#' To estimate the function \mjeqn{f(x)}{f(x)} we specify a set of \mjeqn{N}{N} grid points, \mjeqn{g_{1:N}}{g_{1:N}} with these ordered so that \mjteqn{g_i < g_j}{g_i \lt g_j}{g_i < g_j} if and only if \mjteqn{i < j}{i \lt j}{i < j},
 #' and allow the slope of \mjeqn{f(x)}{f(x)} to only change at these grid points. We then estimate the number of changes, the location of the changes, and hence the resulting
 #' function \mjeqn{f(x)}{f(x)} by minimising a penalised weighted least squares criteria. This criteria includes a term which measures fit to the data, which is calculated as the sum of the
 #'square residuals of the fitted function, scaled by the variance of the noise. The penalty is proportional to the number of changes.
 #'
 #' That is our estimated function will depend on \mjeqn{K}{K}, the number of changes in slope, their locations, \mjeqn{\tau_1,\ldots,\tau_K}{tau_1,...,tau_K}, and the value of the function
-#' \mjeqn{f(x)}{f(x)} at these change points, \mjeqn{\alpha_1,\ldots,\alpha_K}{alpha_1,...,alpha_K}, and its values, \mjeqn{\alpha_0}{alpha_0} at  \mjeqn{\tau_0 < x_1}{tau_0 < x_1} and
+#' \mjeqn{f(x)}{f(x)} at these change points, \mjeqn{\alpha_1,\ldots,\alpha_K}{alpha_1,...,alpha_K}, and its values, \mjeqn{\alpha_0}{alpha_0} at  \mjteqn{\tau_0 < x_1}{tau_0 \lt x_1}{tau_0 < x_1} and
 #' \mjeqn{\alpha_{K+1}}{alpha_{K+1}} at some \mjeqn{\tau_{K+1} > x_N}{tau_{K+1}>x_N}. The CPOP algorithm then estimates \mjeqn{K}{K}, \mjeqn{\tau_{1:K}}{tau_{1:K}} and \mjeqn{\alpha_{0:K+1}}{alpha_{0:K+1}} 
 #' as the values that solve the following minimisation problem
 #'\mjdeqn{\min_{K,\tau_{1:K}\in g_{1:N}, \alpha_{0:K+1} }\left\lbrace\sum_{i=1}^n \frac{1}{\sigma^2_i} \left(y_i -  \alpha_{j(i)}-(\alpha_{j(i)+1}-  \alpha_{j(i)})\frac{x_i-\tau_{j(i)}}{\tau_{j(i)+1}-\tau_{j(i)}}\right)^2+K\beta\right\rbrace}{\min_{K,\tau_{1:K}\in g_{1:N}, \alpha_{0:K+1} }\left\lbrace\sum_{i=1}^n \frac{1}{\sigma^2_i} \left(y_i -  \alpha_{j(i)}-(\alpha_{j(i)+1}-  \alpha_{j(i)})\frac{x_i-\tau_{j(i)}}{\tau_{j(i)+1}-\tau_{j(i)}}\right)^2+K\beta\right\rbrace}
@@ -485,29 +485,28 @@ setMethod("changepoints",signature=list("cpop.class"),
 #' @export
 cpop<-function(y,x=1:length(y)-1,grid=x,beta=2*log(length(y)),sd=sqrt(mean(diff(diff(y))^2)/6),minseglen=0,prune.approx=FALSE)
 {
-    if(base::missing(beta))
-    {
-      message("No value set for beta, so the default value of beta=2log(n), where n is the number of data points, has been used. This default value is appropriate if the noise is IID Gaussian and the value of sd is a good estimate of the standard deviation of the noise. If these assumptions do not hold, the estimate of the number of changepoints may be inaccurate. To check robustness use cpop.crops with beta_min and beta_max arguments.")
-
-    }
-    if(base::missing(sd))
-    {
-       message("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised to check this by comparing the standard deviation of the residuals to the estimated value used for sd.")
-    }
+#    if(base::missing(beta))
+#    {
+#      message("No value set for beta, so the default value of beta=2log(n), where n is the number of data points, has been used. This default value is appropriate if the noise is IID Gaussian and the value of sd is a good estimate of the standard deviation of the noise. If these assumptions do not hold, the estimate of the number of changepoints may be inaccurate. To check robustness use cpop.crops with beta_min and beta_max arguments.")
+#    }
+#    if(base::missing(sd))
+#    {
+#       message("No value set for sd. An estimate for the noise standard deviation based on the variance of the second differences of the data has been used. If this estimate is too small it may lead to over-estimation of changepoints. You are advised to check this by comparing the standard deviation of the residuals to the estimated value used for sd.")
+#    }
     if(is.null(sd))
     {
       sd <- sqrt(mean(diff(diff(y))^2)/6)
     }
     epsilon <- 1e-6
     Map(function(.) max(.,epsilon),sd) |> unlist() -> sd_checked
-    if(FALSE %in% (sd == sd_checked))
-    {
-       message("setting minumum value of sd to 1e-6")
-    }
+#    if(FALSE %in% (sd == sd_checked))
+#    {
+#       message("setting minumum value of sd to 1e-6")
+#    }
     sd <- sd_checked
     if(length(sd)!=length(y))
     {
-      message("Length of sd and y differ. Applying first value of sd to all values of y.")
+#     message("Length of sd and y differ. Applying first value of sd to all values of y.")
       sd <- rep(sd[1],length(y))
     }
     sigsquared<-sd^2

@@ -1,5 +1,10 @@
 #  **News**
 
+## cpop 1.0.9
+
+- Fixed issues in html format documentation
+- Removed some overly verbose messaging
+
 
 ## cpop 1.0.8
 
