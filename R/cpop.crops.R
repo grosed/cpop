@@ -12,7 +12,7 @@ cpop.crops.class<-function(crops.result,y,x)
 #'
 #' @description Runs the Changepoints for a Range of Penalties (CROPS) algorithm of Haynes et al. (2017) to find all of the optimal segmentations for multiple penalty values over a continuous range.
 #' For details of the CROPS method see the \pkg{\link[crops]{crops}} package. To obtain details for each segmentation determined by \code{\link[cpop]{cpop.crops}} use the 
-#' \code{\link[crops]{segmentations}} method (see example below).    
+#' \code{\link[cpop]{segmentations}} method (see example below).    
 #'
 #' @param y A vector of length n containing the data.
 #' @param x A vector of length n containing the locations of y. Default value is NULL, in which case the locations \code{x = 1:length(y)-1} are assumed.
@@ -127,7 +127,7 @@ cpop.crops<-function(y,x = 1:length(y),grid = x, beta_min = 1.5 * log(length(y))
 #' }
 #'}
 #'
-#' @seealso \code{\link{cpop.crops}},\code{\link[crops]{crops}}
+#' @seealso \code{\link[cpop]{cpop.crops}},\code{\link[crops]{crops}}
 #'
 #' @references \insertRef{crops-article}{cpop}
 #' @references \insertRef{crops-package}{cpop}
@@ -151,16 +151,16 @@ function(object)
 #'
 #' @docType methods
 #'
-#' @param object An instance of an S4 class produced by \code{\link{crops}}.
+#' @param object An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #' 
 #' @return A data frame containing the penalties, costs, penalised costs, and changepoint locations. Note - if no changepoints are detected in
 #' the penalty interval [beta_min,beta_max], then the value returned is NULL. 
 #'
 #' @rdname segmentations-methods
 #'
-#' @aliases segmentations,crops.class-method
+#' @aliases segmentations,cpop.crops.class-method
 #' 
-#' @seealso \code{\link{crops}}.
+#' @seealso \code{\link[crops]{crops}}.
 #'
 #' @examples
 #' # see the crops example
@@ -200,13 +200,13 @@ setMethod("segmentations",signature=list("cpop.crops.class"),
 #'
 #' @docType methods
 #'
-#' @param  x An instance of an S4 class produced by \code{\link{crops}}.
+#' @param  x An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #'
 #' @rdname print-methods
 #'
-#' @aliases print,crops.class-method
+#' @aliases print,cpop.crops.class-method
 #' 
-#' @seealso \code{\link{crops}}.
+#' @seealso \code{\link[crops]{crops}}.
 #'
 #' @examples
 #' # see the crops example
@@ -222,20 +222,20 @@ setMethod("print",signature=list("cpop.crops.class"),
 #'
 #' @name plot
 #'
-#' @description Plot methods for an S4 object returned by \code{\link{crops}}. The plot can also be combined with the original data if required.
+#' @description Plot methods for an S4 object returned by \code{\link[crops]{crops}}. The plot can also be combined with the original data if required.
 #'
 #' @docType methods
 #'
-#' @param x An instance of an S4 class produced by \code{\link{crops}}.
+#' @param x An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #' @param y A dataframe containing the locations and values of the data points. The data plot is plotted below, and is aligned with, the changepoint locations.
 #' 
 #' @return A ggplot object. Note - if no changepoints are detected in the penalty interval [beta_min,beta_max], then the value returned is NULL. 
 #'
 #' @rdname plot-methods
 #'
-#' @aliases plot,crops.class,data.frame-method
+#' @aliases plot,cpop.crops.class,data.frame-method
 #' 
-#' @seealso \code{\link{crops}}.
+#' @seealso \code{\link[crops]{crops}}.
 #'
 #' @examples
 #' # see the crops example
@@ -253,7 +253,7 @@ setMethod("plot",signature=list("cpop.crops.class","data.frame"),
 #'
 #' @docType methods
 #'
-#' @param x An instance of an S4 class produced by \code{\link{crops}}.
+#' @param x An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #' 
 #' @rdname plot-methods
 #'
@@ -297,13 +297,13 @@ setMethod("plot",signature=list("crops.class","missing"),
 #'
 #' @docType methods
 #'
-#' @param object An instance of an S4 class produced by \code{\link{crops}}.
+#' @param object An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #'
 #' @rdname summary-methods
 #'
-#' @aliases summary,crops.class-method
+#' @aliases summary,cpop.crops.class-method
 #' 
-#' @seealso \code{\link{crops}}.
+#' @seealso \code{\link[crops]{crops}}.
 #'
 #' @examples
 #' # see the crops example
@@ -343,13 +343,13 @@ setMethod("summary",signature=list("cpop.crops.class"),
 #'
 #' @docType methods
 #'
-#' @param x An instance of an S4 class produced by \code{\link{crops}}.
+#' @param x An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #'
-#' @return An instance of the S4 class type \code{crops.class}. This is the same type as produced by the \code{\link{crops}} function.
+#' @return An instance of the S4 class type \code{crops.class}. This is the same type as produced by the \code{\link[crops]{crops}} function.
 #'
 #' @rdname unique-methods
 #'
-#' @aliases unique,crops.class-method
+#' @aliases unique,cpop.crops.class-method
 #' 
 #'
 setMethod("unique",signature=list("cpop.crops.class"),
@@ -388,11 +388,11 @@ setMethod("unique",signature=list("cpop.crops.class"),
 #'
 #' @docType methods
 #'
-#' @param x An instance of an S4 class produced by \code{\link{crops}}.
+#' @param x An instance of an S4 class produced by \code{\link[crops]{crops}}.
 #' @param beta_min A positive numeric value specifying the minimum penalty value for entries in the crops result. Default value is 0.
 #' @param beta_max A positive numeric value specifying the maximum penalty value for entries in the crops result. Default value is Inf.
 #'
-#' @return An instance of the S4 class type \code{crops.class}. This is the same type as produced by the \code{\link{crops}} function.
+#' @return An instance of the S4 class type \code{crops.class}. This is the same type as produced by the \code{\link[crops]{crops}} function.
 #'
 #' @rdname subset-methods
 #'

@@ -44,5 +44,5 @@ for(m in models)
 \insertRef{cpop-jss-article-2024}{cpop}
 }
 \seealso{
-\code{\link{cpop.crops}},\code{\link[crops]{crops}}
+\code{\link[cpop]{cpop.crops}},\code{\link[crops]{crops}}
 }
