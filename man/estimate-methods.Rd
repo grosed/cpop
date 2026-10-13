@@ -4,6 +4,9 @@
 \alias{estimate}
 \alias{estimate,cpop.class-method}
 \title{Estimate the fit of a cpop model}
+\usage{
+estimate(object,x,...)
+}
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 

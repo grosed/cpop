@@ -1,10 +1,15 @@
 #  **News**
 
+## cpop 1.0.10
+
+- Added post processing methods for cpop.crops results
+- Removed use of max_iterations in call to crops in cpop.crops method
+- Made compatible with the atest version 1.0.5 of crops
+
 ## cpop 1.0.9
 
 - Fixed issues in html format documentation
 - Removed some overly verbose messaging
-
 
 ## cpop 1.0.8
 

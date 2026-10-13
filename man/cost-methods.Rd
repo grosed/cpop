@@ -4,6 +4,9 @@
 \alias{cost}
 \alias{cost,cpop.class-method}
 \title{Calculate the cost of a model fitted by cpop}
+\usage{
+cost(object)
+}
 \arguments{
 \item{object}{An instance of an S4 class produced by \code{\link{cpop}}.}
 }

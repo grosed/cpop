@@ -5,6 +5,9 @@
 \alias{changepoints}
 \alias{changepoints,cpop.class-method}
 \title{Changepoint locations}
+\usage{
+changepoints(object)
+}
 \arguments{
 \item{object}{An instance of an cpop S4 class produced by \code{\link{cpop}}.}
 }
