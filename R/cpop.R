@@ -257,7 +257,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #'
 #' @description Displays an S4 object produced by \code{\link{cpop}}.
 #'
-#' @usage show(object)
+#' @docType methods
 #'
 #' @param object An instance of an S4 class produced by \code{\link{cpop}}.
 #'
@@ -282,7 +282,7 @@ setMethod("summary",signature=list("cpop.class"),function(object)
 #' @references \insertRef{cpop-jss-article-2024}{cpop}
 #'
 #' @export
-if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
+# if(!isGeneric("show")) {setGeneric("show",function(object) {standardGeneric("show")})}
 setMethod("show",signature=list("cpop.class"),function(object)
 {
     summary(object)
